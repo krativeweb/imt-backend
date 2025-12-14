@@ -48,6 +48,7 @@ app.use("/uploads", (req, res, next) => {
 app.use(cookieParser());
 
 // Rate limiting (only on /api)
+app.set("trust proxy", 1);
 app.use(
   "/api",
   rateLimit({
