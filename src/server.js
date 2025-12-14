@@ -1,0 +1,89 @@
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
+import rateLimit from "express-rate-limit";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import { connectDB } from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import mandatoryDisclosureRoutes from "./routes/mandatoryDisclosureRoutes.js";
+import { notFound, errorHandler } from "./middlewares/errorHandler.js";
+import studentActivitiesRoutes from "./routes/studentActivities.js";
+import photoGalleryRoutes from "./routes/photoGallery.js";
+import newsRoutes from "./routes/news.js";
+import faqRoutes from "./routes/faqRoutes.js";
+import placementRoutes from "./routes/placementRoutes.js";
+import facultypageSeoRoutes from "./routes/facultypageSeo.routes.js";
+
+dotenv.config();
+connectDB();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+
+// CORS FIRST — this sets headers on ALL responses (including /uploads)
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    credentials: true,
+  })
+);
+
+// Serve static files WITH proper CORS already applied from above
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Optional: Extra insurance for images (not strictly needed now)
+app.use("/uploads", (req, res, next) => {
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  next();
+});
+
+// Cookie parser
+app.use(cookieParser());
+
+// Rate limiting (only on /api)
+app.use(
+  "/api",
+  rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 500,
+  })
+);
+
+// Logging
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
+
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// Routes
+app.get("/", (req, res) => {
+  res.json({ message: "Secure Auth API with jose is running" });
+});
+
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/mandatory", mandatoryDisclosureRoutes);
+app.use("/api/student-activities", studentActivitiesRoutes);
+app.use("/api/photo-gallery", photoGalleryRoutes);
+app.use("/api/news", newsRoutes);
+app.use("/api/faq", faqRoutes);
+app.use("/api/placement", placementRoutes);
+app.use("/api/faculty-seo", facultypageSeoRoutes);
+
+// Error handlers
+app.use(notFound);
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
