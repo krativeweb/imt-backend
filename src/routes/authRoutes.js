@@ -38,8 +38,8 @@ router.post("/login", async (req, res, next) => {
 
  res.cookie("refreshToken", refreshToken, {
    httpOnly: true,
-   secure: false, // localhost must be false
-   sameSite: "Lax", // Fix for localhost cookie
+  secure: process.env.NODE_ENV === "production", // ✅ REQUIRED on HTTPS
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ✅ KEY FIX
    path: "/",
    maxAge: 7 * 24 * 60 * 60 * 1000,
  });
