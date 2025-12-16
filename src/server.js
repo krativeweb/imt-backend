@@ -18,6 +18,12 @@ import newsRoutes from "./routes/news.js";
 import faqRoutes from "./routes/faqRoutes.js";
 import placementRoutes from "./routes/placementRoutes.js";
 import facultypageSeoRoutes from "./routes/facultypageSeo.routes.js";
+import facultyRoutes from "./routes/faculty.routes.js";
+import lrcRoutes from "./routes/lrc.routes.js";
+import lrcFaqRoutes from "./routes/lrcFaq.routes.js";
+import awardsRecognitionSeoRoutes from "./routes/awardsRecognitionSeo.routes.js";
+
+
 
 dotenv.config();
 connectDB();
@@ -79,6 +85,10 @@ app.use("/api/news", newsRoutes);
 app.use("/api/faq", faqRoutes);
 app.use("/api/placement", placementRoutes);
 app.use("/api/faculty-seo", facultypageSeoRoutes);
+app.use("/api/faculty", facultyRoutes);
+app.use("/api/lrc-page", lrcRoutes);
+app.use("/api/lrc-faq", lrcFaqRoutes);
+app.use("/api/awards-recognition-seo", awardsRecognitionSeoRoutes);
 
 // Error handlers
 app.use(notFound);
