@@ -22,6 +22,8 @@ import facultyRoutes from "./routes/faculty.routes.js";
 import lrcRoutes from "./routes/lrc.routes.js";
 import lrcFaqRoutes from "./routes/lrcFaq.routes.js";
 import awardsRecognitionSeoRoutes from "./routes/awardsRecognitionSeo.routes.js";
+import awardsRoutes from "./routes/awards.js";
+import facultyAwardsRoutes from "./routes/facultyAwards.js";
 
 
 
@@ -89,6 +91,8 @@ app.use("/api/faculty", facultyRoutes);
 app.use("/api/lrc-page", lrcRoutes);
 app.use("/api/lrc-faq", lrcFaqRoutes);
 app.use("/api/awards-recognition-seo", awardsRecognitionSeoRoutes);
+app.use("/api/awards", awardsRoutes);
+app.use("/api/faculty-awards", facultyAwardsRoutes);
 
 // Error handlers
 app.use(notFound);
