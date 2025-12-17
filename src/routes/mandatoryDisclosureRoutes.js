@@ -11,7 +11,7 @@ const router = express.Router();
 // Storage settings
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    let uploadPath = "src/uploads/banners";
+    let uploadPath = "src/uploads/banner";
 
     if (file.fieldname === "gallery_images[]") {
       uploadPath = "src/uploads/gallery";
@@ -87,7 +87,7 @@ router.put(
       //
       if (req.files?.banner_image?.length > 0) {
         const file = req.files.banner_image[0];
-        updateQuery.$set.banner_image = `/uploads/banners/${file.filename}`;
+        updateQuery.$set.banner_image = `/uploads/banner/${file.filename}`;
       }
 
       //
