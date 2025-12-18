@@ -38,6 +38,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+app.set("trust proxy", 1);
 // CORS FIRST — this sets headers on ALL responses (including /uploads)
 app.use(
   cors({
@@ -45,6 +46,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser());
 
 // Serve static files WITH proper CORS already applied from above
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -56,10 +58,10 @@ app.use("/uploads", (req, res, next) => {
 });
 
 // Cookie parser
-app.use(cookieParser());
+
 
 // Rate limiting (only on /api)
-app.set("trust proxy", 1);
+
 app.use(
   "/api",
   rateLimit({
