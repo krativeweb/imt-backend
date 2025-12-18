@@ -36,13 +36,13 @@ router.post("/login", async (req, res, next) => {
     const accessToken = await generateAccessToken(user._id);
     const refreshToken = await generateRefreshToken(user._id);
 
- res.cookie("refreshToken", refreshToken, {
-   httpOnly: true,
-  secure: process.env.NODE_ENV === "production", // ✅ REQUIRED on HTTPS
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ✅ KEY FIX
-   path: "/",
-   maxAge: 7 * 24 * 60 * 60 * 1000,
- });
+res.cookie("refreshToken", refreshToken, {
+  httpOnly: true,
+  secure: true,        // 🔥 ALWAYS
+  sameSite: "none",    // 🔥 ALWAYS
+  path: "/",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
 
 
     res.json({
