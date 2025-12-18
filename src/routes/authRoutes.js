@@ -49,6 +49,7 @@ res.cookie("refreshToken", refreshToken, {
       success: true,
       message: "Login successful",
       token: accessToken,
+      refreshToken,
       user,
     });
   } catch (err) {
