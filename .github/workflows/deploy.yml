@@ -1,49 +1,27 @@
-name: Deploy to Server
+- name: Deploy Backend (public_html) with PM2
+  run: |
+    ssh wmHuTl8HRpJnYAzn@13.203.127.190 << 'EOF'
+      set -e
 
-on:
-  push:
-    branches:
-      - main
+      APP_DIR="/home/sQuvhGZjP55xXTwu/imt-hyderabad-api/public_html"
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+      echo "📂 Moving to project directory"
+      cd "$APP_DIR"
 
-    steps:
-      # 1️⃣ Checkout code
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      echo "🔐 Marking repo as safe for Git"
+      git config --global --add safe.directory "$APP_DIR"
 
-      # 2️⃣ Setup SSH
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H 13.203.127.190 >> ~/.ssh/known_hosts
+      echo "📥 Pulling latest code"
+      git pull origin main
 
-      # 3️⃣ Deploy + PM2 Restart
-      - name: Deploy Backend (public_html) with PM2
-        run: |
-          ssh wmHuTl8HRpJnYAzn@13.203.127.190 << 'EOF'
-            set -e
+      echo "📦 Installing dependencies"
+      npm install --production
 
-            APP_DIR="/home/sQuvhGZjP55xXTwu/imt-hyderabad-api/public_html"
+      echo "🔄 Restarting PM2"
+      pm2 restart imt-hyderabad-api || pm2 start ecosystem.config.js --name imt-hyderabad-api
 
-            echo "📂 Moving to project directory"
-            cd "$APP_DIR"
+      echo "💾 Saving PM2 process list"
+      pm2 save
 
-            echo "📥 Pulling latest code"
-            git pull origin main
-
-            echo "📦 Installing dependencies"
-            npm install --production
-
-            echo "🔄 Restarting PM2"
-            pm2 restart imt-hyderabad-api || pm2 start ecosystem.config.js --name imt-hyderabad-api
-
-            echo "💾 Saving PM2 process list"
-            pm2 save
-
-            echo "✅ Deployment completed successfully"
-          EOF
+      echo "✅ Deployment completed successfully"
+    EOF
