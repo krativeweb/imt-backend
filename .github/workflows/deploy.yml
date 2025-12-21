@@ -22,14 +22,16 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H 13.203.127.190 >> ~/.ssh/known_hosts
 
-      # 3️⃣ Deploy + Restart PM2
-      - name: Deploy Backend with PM2 Restart
+      # 3️⃣ Deploy + PM2 Restart
+      - name: Deploy Backend (public_html) with PM2
         run: |
           ssh wmHuTl8HRpJnYAzn@13.203.127.190 << 'EOF'
             set -e
 
-            echo "📁 Moving to project directory"
-            cd /var/www/imt-backend
+            APP_DIR="/home/sQuvhGZjP55xXTwu/imt-hyderabad-api/public_html"
+
+            echo "📂 Moving to project directory"
+            cd "$APP_DIR"
 
             echo "📥 Pulling latest code"
             git pull origin main
@@ -38,7 +40,7 @@ jobs:
             npm install --production
 
             echo "🔄 Restarting PM2"
-            pm2 restart imt-backend || pm2 start ecosystem.config.js
+            pm2 restart imt-hyderabad-api || pm2 start ecosystem.config.js --name imt-hyderabad-api
 
             echo "💾 Saving PM2 process list"
             pm2 save
