@@ -1,7 +1,7 @@
 - name: Deploy Backend (public_html) with PM2
   run: |
-    ssh wmHuTl8HRpJnYAzn@13.203.127.190 << 'EOF'
-      set -e
+    ssh sQuvhGZjP55xXTwu@13.203.127.190 << 'EOF'
+      set -euxo pipefail
 
       APP_DIR="/home/sQuvhGZjP55xXTwu/imt-hyderabad-api/public_html"
 
@@ -17,8 +17,8 @@
       echo "📦 Installing dependencies"
       npm install --production
 
-      echo "🔄 Restarting PM2"
-      pm2 restart imt-hyderabad-api || pm2 start ecosystem.config.js --name imt-hyderabad-api
+      echo "🔄 Restarting PM2 (with env reload)"
+      pm2 restart imt-hyderabad-api --update-env
 
       echo "💾 Saving PM2 process list"
       pm2 save
