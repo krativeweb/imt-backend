@@ -2,26 +2,46 @@ name: Deploy to Server
 
 on:
   push:
-    branches: [main]
- 
+    branches:
+      - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # 1️⃣ Checkout code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
+      # 2️⃣ Setup SSH
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H 13.203.127.190 >> ~/.ssh/known_hosts
 
-      - name: Deploy
+      # 3️⃣ Deploy + Restart PM2
+      - name: Deploy Backend with PM2 Restart
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd /var/www
-            ls
-          EOF
+          ssh wmHuTl8HRpJnYAzn@13.203.127.190 << 'EOF'
+            set -e
 
+            echo "📁 Moving to project directory"
+            cd /var/www/imt-backend
+
+            echo "📥 Pulling latest code"
+            git pull origin main
+
+            echo "📦 Installing dependencies"
+            npm install --production
+
+            echo "🔄 Restarting PM2"
+            pm2 restart imt-backend || pm2 start ecosystem.config.js
+
+            echo "💾 Saving PM2 process list"
+            pm2 save
+
+            echo "✅ Deployment completed successfully"
+          EOF
