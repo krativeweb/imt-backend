@@ -26,7 +26,7 @@ import awardsRoutes from "./routes/awards.js";
 import facultyAwardsRoutes from "./routes/facultyAwards.js";
 import homeSeoRoutes from "./routes/homeSeo.routes.js";
 import homeAboutRoutes from "./routes/homeAbout.routes.js";
-import uspRoutes from "./routes/uspSection.routes.js";
+import uspRoutes from "./routes/uspSection.routes.js";  
 
 
 
