@@ -1,56 +1,34 @@
-name: Deploy to Server
+- name: Deploy Backend (public_html) with PM2
+  run: |
+    ssh -tt \
+        -o StrictHostKeyChecking=no \
+        -o ServerAliveInterval=60 \
+        -o ServerAliveCountMax=10 \
+        ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
 
-on:
-  push:
-    branches:
-      - main
+      bash -lc '
+        set -euo pipefail
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+        APP_DIR="/home/sQuvhGZjP55xXTwu/imt-hyderabad-api/public_html"
 
-    steps:
-      # 1️⃣ Checkout repository
-      - name: Checkout code
-        uses: actions/checkout@v4
+        echo "📂 Go to app directory"
+        cd "$APP_DIR"
 
-      # 2️⃣ Setup SSH
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+        echo "🔐 Mark repo as safe"
+        git config --global --add safe.directory "$APP_DIR"
 
-      # 3️⃣ Deploy + PM2 restart (FIXED)
-      - name: Deploy Backend (public_html) with PM2
-        run: |
-          ssh -o StrictHostKeyChecking=no \
-              -o ServerAliveInterval=60 \
-              -o ServerAliveCountMax=10 \
-              ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+        echo "📥 Pull latest code"
+        git pull origin main
 
-            set -euo pipefail
+        echo "📦 Install dependencies"
+        npm install --production --no-audit --no-fund
 
-            APP_DIR="/home/sQuvhGZjP55xXTwu/imt-hyderabad-api/public_html"
+        echo "🔄 Restart PM2"
+        pm2 restart imt-hyderabad-api --update-env || pm2 start ecosystem.config.js
 
-            echo "📂 Go to app directory"
-            cd "$APP_DIR"
+        echo "💾 Save PM2 state"
+        pm2 save
 
-            echo "🔐 Mark repo as safe"
-            git config --global --add safe.directory "$APP_DIR"
-
-            echo "📥 Pull latest code"
-            git pull origin main
-
-            echo "📦 Install dependencies"
-            npm install --production --no-audit --no-fund
-
-            echo "🔄 Restart PM2"
-            pm2 restart imt-hyderabad-api --update-env || pm2 start ecosystem.config.js
-
-            echo "💾 Save PM2 state"
-            pm2 save
-
-            echo "✅ DEPLOY SUCCESS"
-          EOF
+        echo "✅ DEPLOY SUCCESS"
+      '
+    EOF
