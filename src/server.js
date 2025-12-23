@@ -32,7 +32,7 @@ import uspRoutes from "./routes/uspSection.routes.js";
 
 dotenv.config();
 connectDB();
-
+  
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
