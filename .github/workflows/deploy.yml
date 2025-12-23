@@ -1,34 +1,30 @@
-- name: Deploy Backend (public_html) with PM2
-  run: |
-    ssh -tt \
-        -o StrictHostKeyChecking=no \
-        -o ServerAliveInterval=60 \
-        -o ServerAliveCountMax=10 \
-        ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-
-      bash -lc '
-        set -euo pipefail
-
-        APP_DIR="/home/sQuvhGZjP55xXTwu/imt-hyderabad-api/public_html"
-
-        echo "📂 Go to app directory"
-        cd "$APP_DIR"
-
-        echo "🔐 Mark repo as safe"
-        git config --global --add safe.directory "$APP_DIR"
-
-        echo "📥 Pull latest code"
-        git pull origin main
-
-        echo "📦 Install dependencies"
-        npm install --production --no-audit --no-fund
-
-        echo "🔄 Restart PM2"
-        pm2 restart imt-hyderabad-api --update-env || pm2 start ecosystem.config.js
-
-        echo "💾 Save PM2 state"
-        pm2 save
-
-        echo "✅ DEPLOY SUCCESS"
-      '
-    EOF
+Run ssh ***@*** << 'EOF'
+  ssh ***@*** << 'EOF'
+    set -euxo pipefail
+  
+    APP_DIR="/home/***/imt-hyderabad-api/public_html"
+  
+    echo "📂 Go to app directory"
+    cd "$APP_DIR"
+  
+    echo "🔐 Mark repo as safe"
+    git config --global --add safe.directory "$APP_DIR"
+  
+    echo "📥 Pull latest code"
+    git pull origin main
+  
+    echo "📦 Install dependencies"
+    npm install --production
+  
+    echo "🔄 Restart PM2 (reload env)"
+    pm2 restart imt-hyderabad-api --update-env
+  
+    echo "💾 Save PM2 state"
+    pm2 save
+  
+    echo "✅ DEPLOY SUCCESS"
+  EOF
+  shell: /usr/bin/bash -e {0}
+Pseudo-terminal will not be allocated because stdin is not a terminal.
+client_loop: send disconnect: Broken pipe
+Error: Process completed with exit code 255.  
