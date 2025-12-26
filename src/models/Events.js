@@ -1,24 +1,35 @@
 import mongoose from "mongoose";
 
-const researchInFocusSchema = new mongoose.Schema(
+const eventSchema = new mongoose.Schema(
   {
-    title: {
+    event_date: {
+      type: Date,
+      required: true,
+    },
+
+    event_time: {
+      type: String, // "14:30"
+      required: true,
+    },
+
+    event_title: {
       type: String,
       required: true,
       trim: true,
     },
-    image: {
+
+    event_place: {
       type: String,
       required: true,
+      trim: true,
     },
-    description: {
-      type: String,
-      required: true,
-    },
+
+    /* 🔹 SOFT DELETE */
     isDeleted: {
       type: Boolean,
       default: false,
     },
+
     deletedAt: {
       type: Date,
       default: null,
@@ -29,7 +40,7 @@ const researchInFocusSchema = new mongoose.Schema(
 
 // 👇 FORCE COLLECTION NAME
 export default mongoose.model(
-  "ResearchInFocus",
-  researchInFocusSchema,
-  "researchinfocus"
+  "Events",
+  eventSchema,
+  "events"
 );

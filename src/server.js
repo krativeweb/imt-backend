@@ -26,29 +26,30 @@ import awardsRoutes from "./routes/awards.js";
 import facultyAwardsRoutes from "./routes/facultyAwards.js";
 import homeSeoRoutes from "./routes/homeSeo.routes.js";
 import homeAboutRoutes from "./routes/homeAbout.routes.js";
-import uspRoutes from "./routes/uspSection.routes.js";  
-
-
+import uspRoutes from "./routes/uspSection.routes.js";
+import researchInFocus from "./routes/researchInFocus.routes.js";
+import programOffered from "./routes/programOffered.routes.js";
+import happenings from "./routes/Happenings.routes.js";
+import events from "./routes/events.routes.js";
+import announcement from "./routes/announcements.routes.js";
+import internationalasssociarion from "./routes/internationalAssociation.routes.js";
+import placementalliance from "./routes/placementAlliances.routes.js";
 
 dotenv.config();
 connectDB();
-  
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
-app.set("trust proxy", 1);
 // CORS FIRST — this sets headers on ALL responses (including /uploads)
 app.use(
   cors({
-    origin: "https://imt-admin.vercel.app",
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.use(cookieParser());
 
 // Serve static files WITH proper CORS already applied from above
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -60,10 +61,10 @@ app.use("/uploads", (req, res, next) => {
 });
 
 // Cookie parser
-
+app.use(cookieParser());
 
 // Rate limiting (only on /api)
-
+app.set("trust proxy", 1);
 app.use(
   "/api",
   rateLimit({
@@ -103,6 +104,13 @@ app.use("/api/faculty-awards", facultyAwardsRoutes);
 app.use("/api/home-seo", homeSeoRoutes);
 app.use("/api/home-about", homeAboutRoutes);
 app.use("/api/usp", uspRoutes);
+app.use("/api/research-infocus", researchInFocus);
+app.use("/api/program-offered", programOffered);
+app.use("/api/happenings", happenings);
+app.use("/api/events", events);
+app.use("/api/announcements", announcement);
+app.use("/api/international-association", internationalasssociarion);
+app.use("/api/placement-alliances", placementalliance);
 // Error handlers
 app.use(notFound);
 app.use(errorHandler);

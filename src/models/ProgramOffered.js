@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const researchInFocusSchema = new mongoose.Schema(
+const programOfferedSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -29,7 +29,7 @@ const researchInFocusSchema = new mongoose.Schema(
 
 // 👇 FORCE COLLECTION NAME
 export default mongoose.model(
-  "ResearchInFocus",
-  researchInFocusSchema,
-  "researchinfocus"
+  "ProgramOffered",
+  programOfferedSchema,
+  "programoffered"
 );

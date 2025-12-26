@@ -1,24 +1,24 @@
 import mongoose from "mongoose";
 
-const researchInFocusSchema = new mongoose.Schema(
+const announcementSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: true,
       trim: true,
     },
-    image: {
-      type: String,
-      required: true,
-    },
+
     description: {
       type: String,
       required: true,
     },
+
+    /* 🔹 SOFT DELETE */
     isDeleted: {
       type: Boolean,
       default: false,
     },
+
     deletedAt: {
       type: Date,
       default: null,
@@ -29,7 +29,7 @@ const researchInFocusSchema = new mongoose.Schema(
 
 // 👇 FORCE COLLECTION NAME
 export default mongoose.model(
-  "ResearchInFocus",
-  researchInFocusSchema,
-  "researchinfocus"
+  "Announcements",
+  announcementSchema,
+  "announcements"
 );

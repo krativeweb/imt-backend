@@ -1,24 +1,34 @@
 import mongoose from "mongoose";
 
-const researchInFocusSchema = new mongoose.Schema(
+const HappeningsSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: true,
       trim: true,
     },
-    image: {
-      type: String,
+
+    images: {
+      type: [String],
       required: true,
+      validate: {
+        validator: function (v) {
+          return Array.isArray(v) && v.length > 0;
+        },
+        message: "At least one image is required",
+      },
     },
+
     description: {
       type: String,
       required: true,
     },
+
     isDeleted: {
       type: Boolean,
       default: false,
     },
+
     deletedAt: {
       type: Date,
       default: null,
@@ -27,9 +37,4 @@ const researchInFocusSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 👇 FORCE COLLECTION NAME
-export default mongoose.model(
-  "ResearchInFocus",
-  researchInFocusSchema,
-  "researchinfocus"
-);
+export default mongoose.model("Happenings", HappeningsSchema, "happenings");

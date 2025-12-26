@@ -19,7 +19,7 @@ const FacultySchema = new mongoose.Schema(
 
     designation: {
       type: String,
-
+      required: true,
     },
 
     qualification: String,
@@ -35,12 +35,12 @@ const FacultySchema = new mongoose.Schema(
 
     faculty_image: {
       type: String,
-    
+      required: true,
     },
 
     qr_image: {
       type: String,
-
+      required: true,
     },
 
     brief: String,

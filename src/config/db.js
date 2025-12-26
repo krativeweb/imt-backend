@@ -8,4 +8,4 @@ export const connectDB = async () => {
     console.error("DB Error:", error);
     process.exit(1);
   }
-};  
+};
