@@ -124,6 +124,7 @@ app.use("/api/events", events);
 app.use("/api/announcements", announcement);
 app.use("/api/international-association", internationalasssociarion);
 app.use("/api/placement-alliances", placementalliance);
+app.use("/api/faculty-details-seo", facultydetailsseo);
 // Error handlers
 app.use(notFound);
 app.use(errorHandler);
