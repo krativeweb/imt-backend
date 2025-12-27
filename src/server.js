@@ -34,7 +34,7 @@ import events from "./routes/events.routes.js";
 import announcement from "./routes/announcements.routes.js";
 import internationalasssociarion from "./routes/internationalAssociation.routes.js";
 import placementalliance from "./routes/placementAlliances.routes.js";
-
+import facultydetailsseo from "./routes/facultypagedetailsSeo.routes.js";
 dotenv.config();
 connectDB();
 
