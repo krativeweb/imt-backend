@@ -53,23 +53,19 @@ const upload = multer({
 ===================================================== */
 router.get("/", async (req, res) => {
   try {
-    const seo = await HomeSeo.findOne({ page_slug: "/" });
+    const seo = await HomeSeo.findOne({ page_slug: "/" }).lean();
 
     if (!seo) {
       return res.status(404).json({
-        success: false,
         message: "Home SEO not found",
       });
     }
 
-    res.json({
-      success: true,
-      data: seo, // ✅ OBJECT, NOT ARRAY
-    });
+    // ✅ Send SEO object directly
+    res.json(seo);
   } catch (error) {
     console.error("Home SEO API error:", error);
     res.status(500).json({
-      success: false,
       message: "Server error",
     });
   }
