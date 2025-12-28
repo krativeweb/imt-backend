@@ -89,10 +89,14 @@ router.post(
 ==================================================== */
 
 router.get("/", async (req, res) => {
-  const data = await Faculty.find({ isDeleted: false })
-    .sort({ createdAt: -1 });
+  try {
+    const data = await Faculty.find({ isDeleted: false })
+      .sort({ name: 1 }); // A → Z
 
-  res.json(data);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 /* ====================================================
