@@ -2,16 +2,51 @@ import mongoose from "mongoose";
 
 const HomeSeoSchema = new mongoose.Schema(
   {
-    page_title: { type: String, required: true },
-    page_slug: { type: String, required: true, unique: true },
+    page_title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-    meta_title: String,
-    meta_description: String,
-    meta_keywords: String,
-    meta_canonical: String,
+    page_slug: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
 
-    banner_image: String, // stored path
-    banner_text: String,
+    meta_title: {
+      type: String,
+      trim: true,
+      maxlength: 60,
+    },
+
+    meta_description: {
+      type: String,
+      trim: true,
+      maxlength: 160,
+    },
+
+    meta_keywords: {
+      type: String,
+      trim: true,
+    },
+
+    meta_canonical: {
+      type: String,
+      trim: true,
+    },
+
+    /* 🔥 CHANGED: IMAGE → VIDEO */
+    banner_video: {
+      type: String, // stores video file path
+      default: "",
+    },
+
+    banner_text: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );
