@@ -53,25 +53,10 @@ const upload = multer({
 ===================================================== */
 router.get("/", async (req, res) => {
   try {
-    const seo = await HomeSeo.findOne({ page_slug: "/" });
-
-    if (!seo) {
-      return res.status(404).json({
-        success: false,
-        message: "Home SEO not found",
-      });
-    }
-
-    res.json({
-      success: true,
-      data: seo, // ✅ OBJECT, NOT ARRAY
-    });
+    const data = await HomeSeo.find().sort({ createdAt: -1 });
+    res.json({ success: true, data });
   } catch (error) {
-    console.error("Home SEO API error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
