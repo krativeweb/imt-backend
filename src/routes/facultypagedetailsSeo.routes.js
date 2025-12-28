@@ -10,12 +10,7 @@ const router = express.Router();
    UPLOAD DIRECTORY
    Path: src/uploads/faculty-details
 ---------------------------------------------------- */
-const uploadDir = path.join(
-  process.cwd(),
-  "src",
-  "uploads",
-  "faculty-details"
-);
+const uploadDir = path.join(process.cwd(), "src", "uploads", "faculty-details");
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -42,7 +37,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
 });
 
 /* ----------------------------------------------------
@@ -82,42 +77,37 @@ router.get("/:id", async (req, res) => {
    UPDATE FACULTY DETAILS SEO PAGE
    PUT /api/faculty-details-seo/:id
 ---------------------------------------------------- */
-router.put(
-  "/:id",
-  upload.single("banner_image"),
-  async (req, res) => {
-    try {
-      const updateData = {
-        meta_title: req.body.meta_title,
-        meta_description: req.body.meta_description,
-        meta_keywords: req.body.meta_keywords,
-        meta_canonical: req.body.meta_canonical,
-        banner_text: req.body.banner_text,
-      };
+router.put("/:id", upload.single("banner_image"), async (req, res) => {
+  try {
+    const updateData = {
+      meta_title: req.body.meta_title,
+      meta_description: req.body.meta_description,
+      meta_keywords: req.body.meta_keywords,
+      meta_canonical: req.body.meta_canonical,
+      banner_text: req.body.banner_text,
+    };
 
-      if (req.file) {
-        updateData.banner_image = `/uploads/faculty-details/${req.file.filename}`;
-      }
-
-      const updatedPage =
-        await FacultyDetailsSEO.findByIdAndUpdate(
-          req.params.id,
-          updateData,
-          { new: true }
-        );
-
-      if (!updatedPage) {
-        return res.status(404).json({ message: "Page not found" });
-      }
-
-      res.json({
-        message: "Faculty details SEO updated successfully",
-        data: updatedPage,
-      });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
+    if (req.file) {
+      updateData.banner_image = `/uploads/faculty-details/${req.file.filename}`;
     }
+
+    const updatedPage = await FacultyDetailsSEO.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    if (!updatedPage) {
+      return res.status(404).json({ message: "Page not found" });
+    }
+
+    res.json({
+      message: "Faculty details SEO updated successfully",
+      data: updatedPage,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-);
+});
 
 export default router;
