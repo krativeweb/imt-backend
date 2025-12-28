@@ -147,7 +147,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 
     // Replace image if new one uploaded
     if (req.file) {
-      research.image = `uploads/research-in-focus/edit/${req.file.filename}`;
+      research.image = `uploads/research-in-focus/${req.file.filename}`;
     }
 
     await research.save();

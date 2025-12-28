@@ -90,8 +90,7 @@ router.post(
 
 router.get("/", async (req, res) => {
   try {
-    const data = await Faculty.find({ isDeleted: false })
-      .sort({ name: 1 }); // A → Z
+    const data = await Faculty.find({ isDeleted: false }).sort({ name: 1 }); // A → Z
 
     res.json(data);
   } catch (err) {
@@ -109,8 +108,7 @@ router.get("/slug/:slug", async (req, res) => {
     isDeleted: false,
   });
 
-  if (!faculty)
-    return res.status(404).json({ message: "Not found" });
+  if (!faculty) return res.status(404).json({ message: "Not found" });
 
   res.json(faculty);
 });
