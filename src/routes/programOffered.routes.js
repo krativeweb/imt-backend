@@ -43,7 +43,7 @@ router.get("/", async (req, res) => {
   try {
     const research = await ResearchInFocus.find({
       isDeleted: false,
-    }).sort({ createdAt: 1 });
+    }).sort({ createdAt: -1 });
 
     res.json({ success: true, data: research });
   } catch (err) {
