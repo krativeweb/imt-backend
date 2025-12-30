@@ -64,6 +64,36 @@ router.get("/", async (req, res) => {
 });
 
 /* ===============================
+   GET BY SLUG (PUBLIC)
+================================ */
+router.get("/slug/:slug", async (req, res) => {
+  try {
+    const item = await ResearchInFocus.findOne({
+      page_slug: req.params.slug,
+      isDeleted: false,
+    });
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: "Research not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      data: item,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+
+/* ===============================
    GET SINGLE
 ================================ */
 router.get("/:id", async (req, res) => {
