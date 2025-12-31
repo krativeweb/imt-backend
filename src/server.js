@@ -131,7 +131,6 @@ app.use("/api/faculty-details-seo", facultydetailsseo);
 app.use("/api/newannoucement", newadmissions);
 app.use("/api/home-connect", homeconnect);
 
-
  
 // Error handlers
 app.use(notFound);
