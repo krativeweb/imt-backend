@@ -1,0 +1,35 @@
+import mongoose from "mongoose";
+
+const homeConnectSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
+  },
+  { timestamps: true }
+);
+
+// 👇 FORCE COLLECTION NAME
+export default mongoose.model(
+  "Homeconnect",
+  homeConnectSchema,
+  "homeconnect"
+);

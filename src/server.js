@@ -36,6 +36,7 @@ import internationalasssociarion from "./routes/internationalAssociation.routes.
 import placementalliance from "./routes/placementAlliances.routes.js";
 import facultydetailsseo from "./routes/facultypagedetailsSeo.routes.js";
 import newadmissions from "./routes/newannoucement.routes.js";
+import homeconnect from "./routes/homeconnect.routes.js";
 
 dotenv.config();
 connectDB();
@@ -128,6 +129,7 @@ app.use("/api/international-association", internationalasssociarion);
 app.use("/api/placement-alliances", placementalliance);
 app.use("/api/faculty-details-seo", facultydetailsseo);
 app.use("/api/newannoucement", newadmissions);
+app.use("/api/home-connect", homeconnect);
 
 
 // Error handlers
