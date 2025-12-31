@@ -145,33 +145,45 @@ router.put(
 );
 
 // Get page by slug (PUBLIC API)
-router.get("/slug/:page_slug", async (req, res) => {
+// 🔹 GET PAGE BY SLUG (SEO + CONTENT)
+router.get("/slug/:slug", async (req, res) => {
   try {
-    const { page_slug } = req.params;
+    const { slug } = req.params;
 
     const page = await MandatoryPage.findOne({
-      page_slug,
-    });
+      page_slug: slug,
+    }).lean();
 
     if (!page) {
       return res.status(404).json({
-        success: false,
         message: "Page not found",
       });
     }
 
+    // 🔥 RETURN FLAT OBJECT (SEO-FRIENDLY)
     res.json({
-      success: true,
-      data: page,
+      page_title: page.page_title,
+      meta_title: page.meta_title,
+      meta_description: page.meta_description,
+      meta_keywords: page.meta_keywords,
+      meta_canonical: page.meta_canonical,
+
+      // extra fields (safe to keep)
+      banner_image: page.banner_image,
+      banner_text: page.banner_text,
+      page_content: page.page_content,
+      gallery_images: page.gallery_images,
+      page_slug: page.page_slug,
+      page_parent: page.page_parent,
     });
   } catch (error) {
-    console.error("Fetch by slug error:", error);
+    console.error("Slug fetch error:", error);
     res.status(500).json({
-      success: false,
       message: "Server Error",
     });
   }
 });
+
 
 
 
