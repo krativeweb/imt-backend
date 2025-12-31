@@ -53,7 +53,7 @@ coverage/
 # --------------------
 # Uploads / temp files
 # --------------------
-uploads/
+#uploads/
 tmp/
 
 # --------------------
