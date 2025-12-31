@@ -144,6 +144,35 @@ router.put(
   }
 );
 
+// Get page by slug (PUBLIC API)
+router.get("/slug/:page_slug", async (req, res) => {
+  try {
+    const { page_slug } = req.params;
+
+    const page = await MandatoryPage.findOne({
+      page_slug,
+    });
+
+    if (!page) {
+      return res.status(404).json({
+        success: false,
+        message: "Page not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      data: page,
+    });
+  } catch (error) {
+    console.error("Fetch by slug error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+});
+
 
 
 export default router;
