@@ -11,6 +11,7 @@ const LrcPageSchema = new mongoose.Schema(
     meta_canonical: String,
 
     banner_image: String,
+    banner_text: String,  
 
     about_lrc: String,
     resources: String,
