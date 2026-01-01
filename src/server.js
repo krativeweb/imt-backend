@@ -37,6 +37,7 @@ import placementalliance from "./routes/placementAlliances.routes.js";
 import facultydetailsseo from "./routes/facultypagedetailsSeo.routes.js";
 import newadmissions from "./routes/newannoucement.routes.js";
 import homeconnect from "./routes/homeconnect.routes.js";
+import imtassociationGalleryRoutes from "./routes/InternationalAssociationGallery.js";
 
 dotenv.config();
 connectDB();
@@ -130,6 +131,7 @@ app.use("/api/placement-alliances", placementalliance);
 app.use("/api/faculty-details-seo", facultydetailsseo);
 app.use("/api/newannoucement", newadmissions);
 app.use("/api/home-connect", homeconnect);
+app.use("/api/imt-association-gallery", imtassociationGalleryRoutes);
 
  
 // Error handlers
