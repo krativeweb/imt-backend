@@ -41,6 +41,8 @@ import imtassociationGalleryRoutes from "./routes/InternationalAssociationGaller
 import workshopseo from "./routes/workshopsConferencesSeo.routes.js";
 import workshopdetails from "./routes/workshopsDetails.routes.js";
 import conferencdetails from "./routes/conferenceDetails.routes.js";
+import researchpublication from "./routes/researchpublications.routes.js";
+import sponsorresearch from "./routes/sponsoredResearchAdvisoryServices.routes.js";
 
 dotenv.config();
 connectDB();
@@ -138,6 +140,8 @@ app.use("/api/imt-association-gallery", imtassociationGalleryRoutes);
 app.use("/api/workshops-conferences-seo", workshopseo);
 app.use("/api/workshops", workshopdetails);
 app.use("/api/conferences", conferencdetails);
+app.use("/api/research-publication", researchpublication);
+app.use("/api/sponsored-research", sponsorresearch);
 
 // Error handlers 
 app.use(notFound);
