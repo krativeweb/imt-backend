@@ -38,6 +38,9 @@ import facultydetailsseo from "./routes/facultypagedetailsSeo.routes.js";
 import newadmissions from "./routes/newannoucement.routes.js";
 import homeconnect from "./routes/homeconnect.routes.js";
 import imtassociationGalleryRoutes from "./routes/InternationalAssociationGallery.js";
+import workshopseo from "./routes/workshopsConferencesSeo.routes.js";
+import workshopdetails from "./routes/workshopsDetails.routes.js";
+import conferencdetails from "./routes/conferenceDetails.routes.js";
 
 dotenv.config();
 connectDB();
@@ -132,9 +135,11 @@ app.use("/api/faculty-details-seo", facultydetailsseo);
 app.use("/api/newannoucement", newadmissions);
 app.use("/api/home-connect", homeconnect);
 app.use("/api/imt-association-gallery", imtassociationGalleryRoutes);
+app.use("/api/workshops-conferences-seo", workshopseo);
+app.use("/api/workshops", workshopdetails);
+app.use("/api/conferences", conferencdetails);
 
- 
-// Error handlers
+// Error handlers 
 app.use(notFound);
 app.use(errorHandler);
 
