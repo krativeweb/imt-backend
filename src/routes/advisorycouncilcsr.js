@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import AdvisoryCouncil from "../models/AdvisoryCouncil.js";
+import AdvisoryCouncilCSR from "../models/Advisorycouncilcsr.js";
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ const uploadDir = path.join(
   process.cwd(),
   "src",
   "uploads",
-  "advisory-council"
+  "advisory-council-csr"
 );
 
 if (!fs.existsSync(uploadDir)) {
@@ -38,7 +38,7 @@ const upload = multer({ storage });
 
 /* =====================================================
    GET ALL MEMBERS (OPTIONAL TYPE FILTER)
-   GET /api/advisory-council?type=ADVISORY_COUNCIL
+   GET /api/advisory-council-csr?type=ADVISORY_COUNCIL
 ===================================================== */
 router.get("/", async (req, res) => {
   try {
@@ -48,7 +48,7 @@ router.get("/", async (req, res) => {
       filter.type = req.query.type;
     }
 
-    const members = await AdvisoryCouncil.find(filter).sort({
+    const members = await AdvisoryCouncilCSR.find(filter).sort({
       createdAt: -1,
     });
 
@@ -69,7 +69,7 @@ router.get("/", async (req, res) => {
 ================================ */
 router.get("/:id", async (req, res) => {
   try {
-    const member = await AdvisoryCouncil.findOne({
+    const member = await AdvisoryCouncilCSR.findOne({
       _id: req.params.id,
       isDeleted: false,
     });
@@ -115,12 +115,12 @@ router.post("/", upload.single("image"), async (req, res) => {
       });
     }
 
-    const member = await AdvisoryCouncil.create({
+    const member = await AdvisoryCouncilCSR.create({
       type,
       name,
       designation,
       role_expertise,
-      image: `uploads/advisory-council/${req.file.filename}`,
+      image: `uploads/advisory-council-csr/${req.file.filename}`,
     });
 
     res.status(201).json({
@@ -140,7 +140,7 @@ router.post("/", upload.single("image"), async (req, res) => {
 ================================ */
 router.put("/:id", upload.single("image"), async (req, res) => {
   try {
-    const member = await AdvisoryCouncil.findOne({
+    const member = await AdvisoryCouncilCSR.findOne({
       _id: req.params.id,
       isDeleted: false,
     });
@@ -160,7 +160,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       member.role_expertise = req.body.role_expertise;
 
     if (req.file) {
-      member.image = `uploads/advisory-council/${req.file.filename}`;
+      member.image = `uploads/advisory-council-csr/${req.file.filename}`;
     }
 
     await member.save();
@@ -182,7 +182,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 ================================ */
 router.delete("/:id", async (req, res) => {
   try {
-    const member = await AdvisoryCouncil.findOne({
+    const member = await AdvisoryCouncilCSR.findOne({
       _id: req.params.id,
       isDeleted: false,
     });

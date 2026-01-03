@@ -58,9 +58,9 @@ const advisoryCouncilSchema = new mongoose.Schema(
   }
 );
 
-/* 👇 FORCE COLLECTION NAME */
+/* 👇 FORCE COLLECTION NAME (UPDATED) */
 export default mongoose.model(
-  "AdvisoryCouncil",
+  "Advisorycouncilcsr",       // model name (can be anything, recommended unique)
   advisoryCouncilSchema,
-  "advisory_council"
+  "advisory-council-csr"      // ✅ new MongoDB collection name
 );
