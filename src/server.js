@@ -51,6 +51,7 @@ import affilatedfacpracinno from "./routes/affilatedfacultypractitionersinno.js"
 import advisorycouncilcsr from "./routes/advisorycouncilcsr.js";
 import researcharchiveseo from "./routes/researchArchiveseo.routes.js";
 import researchjournalpulication from "./routes/researchJournalpublication.routes.js";
+import researchcasepublication from "./routes/researchCasespublication.routes.js";
 
 dotenv.config();
 connectDB();
@@ -158,6 +159,7 @@ app.use("/api/affiliated-faculty-practitioners-innovation", affilatedfacpracinno
 app.use("/api/advisory-council-csr", advisorycouncilcsr);
 app.use("/api/research-archive-seo", researcharchiveseo);
 app.use("/api/research-journal-publication", researchjournalpulication);
+app.use("/api/research-cases-publication", researchcasepublication);
 
 // Error handlers  
 app.use(notFound);
