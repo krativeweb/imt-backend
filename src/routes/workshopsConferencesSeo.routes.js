@@ -49,6 +49,31 @@ router.get("/", async (req, res) => {
   }
 });
 
+
+/* ---------------------------------------------------
+   GET SEO BY SLUG ✅
+   /api/workshops-conferences/slug/:slug
+--------------------------------------------------- */
+router.get("/slug/:slug", async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const seo = await WorkshopsConferencesSeo.findOne({
+      page_slug: slug,
+    });
+
+    if (!seo) {
+      return res.status(404).json({
+        success: false,
+        message: "SEO data not found for this slug",
+      });
+    }
+
+    res.json(seo); // 🔥 return direct object for Next.js metadata
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 /* ---------------------------------------------------
    UPDATE SEO & BANNER
 --------------------------------------------------- */
