@@ -46,6 +46,8 @@ import sponsorresearch from "./routes/sponsoredResearchAdvisoryServices.routes.j
 import centredigital from "./routes/centredigitaltransformation.routes.js";
 import advisorycouncil from "./routes/advisoryCouncil.routes.js";
 import centresustainability from "./routes/centresustainabilitycsr.routes.js";
+import innovationlab from "./routes/innovationlab.routes.js";
+import affilatedfacpracinno from "./routes/affilatedfacultypractitionersinno.js";
 
 dotenv.config();
 connectDB();
@@ -148,6 +150,8 @@ app.use("/api/sponsored-research", sponsorresearch);
 app.use("/api/centre-digital-transformation", centredigital);
 app.use("/api/advisory-council", advisorycouncil);
 app.use("/api/centre-sustainability-csr", centresustainability);
+app.use("/api/innovation-lab", innovationlab);
+app.use("/api/affiliated-faculty-practitioners-innovation", affilatedfacpracinno);
 
 // Error handlers  
 app.use(notFound);
