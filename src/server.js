@@ -43,6 +43,9 @@ import workshopdetails from "./routes/workshopsDetails.routes.js";
 import conferencdetails from "./routes/conferenceDetails.routes.js";
 import researchpublication from "./routes/researchpublications.routes.js";
 import sponsorresearch from "./routes/sponsoredResearchAdvisoryServices.routes.js";
+import centredigital from "./routes/centredigitaltransformation.routes.js";
+import advisorycouncil from "./routes/advisoryCouncil.routes.js";
+import centresustainability from "./routes/centresustainabilitycsr.routes.js";
 
 dotenv.config();
 connectDB();
@@ -142,8 +145,11 @@ app.use("/api/workshops", workshopdetails);
 app.use("/api/conferences", conferencdetails);
 app.use("/api/research-publication", researchpublication);
 app.use("/api/sponsored-research", sponsorresearch);
+app.use("/api/centre-digital-transformation", centredigital);
+app.use("/api/advisory-council", advisorycouncil);
+app.use("/api/centre-sustainability-csr", centresustainability);
 
-// Error handlers 
+// Error handlers  
 app.use(notFound);
 app.use(errorHandler);
 
