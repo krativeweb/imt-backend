@@ -47,6 +47,30 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/slug/:slug", async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const data = await AwardsRecognitionSeo.findOne({
+      page_slug: slug,
+    }).lean();
+
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "SEO data not found for this slug",
+      });
+    }
+
+    res.json(data); // ⬅️ IMPORTANT: return direct object (not wrapped)
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
 /* ---------------------------------------------------
    UPDATE SEO & BANNER
 --------------------------------------------------- */
