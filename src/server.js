@@ -52,6 +52,10 @@ import advisorycouncilcsr from "./routes/advisorycouncilcsr.js";
 import researcharchiveseo from "./routes/researchArchiveseo.routes.js";
 import researchjournalpulication from "./routes/researchJournalpublication.routes.js";
 import researchcasepublication from "./routes/researchCasespublication.routes.js";
+import researchconferenceprocess from "./routes/researchConferenceproceeding.routes.js"
+import researcharticlenews from "./routes/researchnewsarticle.routes.js";
+import researchbooks from "./routes/researchbooks.routes.js";
+import researchmagazines from "./routes/researchmagazines.routes.js";
 
 dotenv.config();
 connectDB();
@@ -160,6 +164,11 @@ app.use("/api/advisory-council-csr", advisorycouncilcsr);
 app.use("/api/research-archive-seo", researcharchiveseo);
 app.use("/api/research-journal-publication", researchjournalpulication);
 app.use("/api/research-cases-publication", researchcasepublication);
+app.use("/api/research-conference-proceeding", researchconferenceprocess);
+app.use("/api/research-news-article", researcharticlenews);
+app.use("/api/research-books", researchbooks);
+app.use("/api/research-magazines", researchmagazines);
+
 
 // Error handlers  
 app.use(notFound);
