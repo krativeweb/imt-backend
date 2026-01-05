@@ -57,6 +57,7 @@ import researcharticlenews from "./routes/researchnewsarticle.routes.js";
 import researchbooks from "./routes/researchbooks.routes.js";
 import researchmagazines from "./routes/researchmagazines.routes.js";
 import aboutpgdm from "./routes/aboutpgdm.routes.js";
+import pgdmgeneral from "./routes/pgdmgeneral.routes.js";
 
 dotenv.config();
 connectDB();
@@ -170,6 +171,7 @@ app.use("/api/research-news-article", researcharticlenews);
 app.use("/api/research-books", researchbooks);
 app.use("/api/research-magazines", researchmagazines);
 app.use("/api/about-pgdm", aboutpgdm);
+app.use("/api/pgdm-general", pgdmgeneral);
 
 
 // Error handlers  
