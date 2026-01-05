@@ -2,18 +2,34 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 import AboutPgdmSEO from "../models/AboutPgdm.js";
 
 const router = express.Router();
 
 /* ---------------------------------------------------
+   __DIRNAME FIX (ESM)
+--------------------------------------------------- */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/* ---------------------------------------------------
    BANNER UPLOAD DIRECTORY
 --------------------------------------------------- */
-const uploadDir = path.join(process.cwd(), "src", "uploads", "banner");
+const uploadDir = path.join(__dirname, "../uploads/banner");
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
+
+/* ---------------------------------------------------
+   🔥 SERVE UPLOADS FROM THIS ROUTER ONLY
+   URL: /api/about-pgdm/uploads/banner/filename.png
+--------------------------------------------------- */
+router.use(
+  "/uploads",
+  express.static(path.join(__dirname, "../uploads"))
+);
 
 /* ---------------------------------------------------
    MULTER CONFIG
@@ -70,7 +86,6 @@ router.get("/slug/:slug", async (req, res) => {
       });
     }
 
-    // ✅ RETURN SINGLE OBJECT
     res.json(data);
   } catch (error) {
     res.status(500).json({
@@ -81,7 +96,7 @@ router.get("/slug/:slug", async (req, res) => {
 });
 
 /* ---------------------------------------------------
-   UPDATE ABOUT PGDM (SEO + CONTENT)
+   UPDATE ABOUT PGDM (SEO + CONTENT + IMAGE)
 --------------------------------------------------- */
 router.put(
   "/:id",
@@ -105,7 +120,8 @@ router.put(
 
       /* ---------- Banner Image ---------- */
       if (req.file) {
-        updateData.banner_image = `uploads/banner/${req.file.filename}`;
+        // 👇 IMPORTANT: router-level public URL
+        updateData.banner_image = `/api/about-pgdm/uploads/banner/${req.file.filename}`;
       }
 
       const updated = await AboutPgdmSEO.findByIdAndUpdate(
