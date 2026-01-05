@@ -58,6 +58,8 @@ import researchbooks from "./routes/researchbooks.routes.js";
 import researchmagazines from "./routes/researchmagazines.routes.js";
 import aboutpgdm from "./routes/aboutpgdm.routes.js";
 import pgdmgeneral from "./routes/pgdmgeneral.routes.js";
+import pgdmfinance from "./routes/pgdmfinance.routes.js";
+import learnaboutprogram from "./routes/learnaboutProgram.routes.js";
 
 dotenv.config();
 connectDB();
@@ -172,6 +174,8 @@ app.use("/api/research-books", researchbooks);
 app.use("/api/research-magazines", researchmagazines);
 app.use("/api/about-pgdm", aboutpgdm);
 app.use("/api/pgdm-general", pgdmgeneral);
+app.use("/api/pgdm-finance", pgdmfinance);
+app.use("/api/learn-about-program", learnaboutprogram);
 
 
 // Error handlers  
