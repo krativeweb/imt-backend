@@ -34,25 +34,26 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ---------------------------------------------------
-   GET ABOUT PGDM (SINGLE RECORD)
+   GET ABOUT PGDM (ADMIN TABLE – ARRAY)
 --------------------------------------------------- */
 router.get("/", async (req, res) => {
   try {
-    const data = await AboutPgdmSEO.findOne({
+    const data = await AboutPgdmSEO.find({
       page_slug: "about-pgdm",
-    });
+    }).lean();
 
-    res.json({
-      success: true,
-      data,
-    });
+    // ✅ ALWAYS RETURN ARRAY
+    res.json(data || []);
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 
 /* ---------------------------------------------------
-   GET BY SLUG (FRONTEND USE)
+   GET ABOUT PGDM BY SLUG (FRONTEND – OBJECT)
 --------------------------------------------------- */
 router.get("/slug/:slug", async (req, res) => {
   try {
@@ -69,7 +70,8 @@ router.get("/slug/:slug", async (req, res) => {
       });
     }
 
-    res.json(data); // ⬅️ return direct object
+    // ✅ RETURN SINGLE OBJECT
+    res.json(data);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -125,7 +127,10 @@ router.put(
         data: updated,
       });
     } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
     }
   }
 );
