@@ -88,11 +88,14 @@ router.post("/logout", (req, res) => {
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/", // must match cookie path
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    path: "/", // MUST match
   });
 
-  res.json({ success: true, message: "Logged out" });
+  return res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
 });
 
 export default router;
