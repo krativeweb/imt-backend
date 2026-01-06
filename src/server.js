@@ -60,6 +60,7 @@ import aboutpgdm from "./routes/aboutpgdm.routes.js";
 import pgdmgeneral from "./routes/pgdmgeneral.routes.js";
 import pgdmfinance from "./routes/pgdmfinance.routes.js";
 import learnaboutprogram from "./routes/learnaboutProgram.routes.js";
+import pgdmmarketing from "./routes/pgdmmarketing.routes.js";
 
 dotenv.config();
 connectDB();
@@ -176,6 +177,7 @@ app.use("/api/about-pgdm", aboutpgdm);
 app.use("/api/pgdm-general", pgdmgeneral);
 app.use("/api/pgdm-finance", pgdmfinance);
 app.use("/api/learn-about-program", learnaboutprogram);
+app.use("/api/pgdm-marketing", pgdmmarketing);
 
 
 // Error handlers  
