@@ -67,6 +67,7 @@ import studentsonroll from "./routes/studentonrole.js";
 import exclusiveeducation from "./routes/executiveedication.routes.js";
 import distinguishedclients from "./routes/distinguishedclients.routes.js";
 import campusPlacementsRoutes from "./routes/CampusPlacements.js";
+import internshipPageRoutes from "./routes/internshipPage.routes.js";
 dotenv.config();
 connectDB();
 
@@ -189,7 +190,7 @@ app.use("/api/students-on-roll", studentsonroll);
 app.use("/api/executive-education", exclusiveeducation);
 app.use("/api/distinguished-clients", distinguishedclients);
 app.use("/api/campus-placements", campusPlacementsRoutes);
-
+app.use("/api/internship-page", internshipPageRoutes);
 // Error handlers  
 app.use(notFound);
 app.use(errorHandler);
