@@ -62,6 +62,10 @@ import pgdmfinance from "./routes/pgdmfinance.routes.js";
 import learnaboutprogram from "./routes/learnaboutProgram.routes.js";
 import pgdmmarketing from "./routes/pgdmmarketing.routes.js";
 import pgdmkscm from "./routes/pgdmlscm.routes.js";
+import fellowprograminmngment from "./routes/fellowprograminmanagement.routes.js";
+import studentsonroll from "./routes/studentonrole.js";
+import exclusiveeducation from "./routes/executiveedication.routes.js";
+import distinguishedclients from "./routes/distinguishedclients.routes.js";
 
 dotenv.config();
 connectDB();
@@ -180,6 +184,10 @@ app.use("/api/pgdm-finance", pgdmfinance);
 app.use("/api/learn-about-program", learnaboutprogram);
 app.use("/api/pgdm-marketing", pgdmmarketing);
 app.use("/api/pgdm-logistics-supply-chain", pgdmkscm);
+app.use("/api/fellowprogram-in-management", fellowprograminmngment);
+app.use("/api/students-on-roll", studentsonroll);
+app.use("/api/executive-education", exclusiveeducation);
+app.use("/api/distinguished-clients", distinguishedclients);
 
 
 // Error handlers  
