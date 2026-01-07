@@ -66,7 +66,7 @@ import fellowprograminmngment from "./routes/fellowprograminmanagement.routes.js
 import studentsonroll from "./routes/studentonrole.js";
 import exclusiveeducation from "./routes/executiveedication.routes.js";
 import distinguishedclients from "./routes/distinguishedclients.routes.js";
-
+import campusPlacementsRoutes from "./routes/CampusPlacements.js";
 dotenv.config();
 connectDB();
 
@@ -188,7 +188,7 @@ app.use("/api/fellowprogram-in-management", fellowprograminmngment);
 app.use("/api/students-on-roll", studentsonroll);
 app.use("/api/executive-education", exclusiveeducation);
 app.use("/api/distinguished-clients", distinguishedclients);
-
+app.use("/api/campus-placements", campusPlacementsRoutes);
 
 // Error handlers  
 app.use(notFound);
