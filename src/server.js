@@ -70,6 +70,8 @@ import campusPlacementsRoutes from "./routes/CampusPlacements.js";
 import internshipPageRoutes from "./routes/internshipPage.routes.js";
 import fellowprograminmngmenttwo from "./routes/fellowprograminmanagementtwo.routes.js";
 import corporateConnectSeoRoutes from "./routes/corporateConnectSeo.routes.js";
+import corporateConnectRoutes from "./routes/corporateConnect.routes.js";
+
 dotenv.config();
 connectDB();
 
@@ -195,6 +197,8 @@ app.use("/api/campus-placements", campusPlacementsRoutes);
 app.use("/api/internship-page", internshipPageRoutes);
 app.use("/api/fellow-program-management", fellowprograminmngmenttwo);
 app.use("/api/corporate-connect-seo", corporateConnectSeoRoutes);
+app.use("/api/corporate-connect", corporateConnectRoutes);
+
 // Error handlers  
 app.use(notFound);
 app.use(errorHandler);
