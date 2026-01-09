@@ -31,8 +31,7 @@ const researchJournalPublicationSchema = new mongoose.Schema(
     },
 
     /* -------------------------
-       AUTHORS
-       (Comma-separated string)
+       AUTHORS (comma separated)
     ------------------------- */
     authors: {
       type: String,
@@ -50,24 +49,33 @@ const researchJournalPublicationSchema = new mongoose.Schema(
     },
 
     /* -------------------------
+       VOLUME (NEW)
+    ------------------------- */
+    volume: {
+      type: String,
+      trim: true,
+    },
+
+    /* -------------------------
        PUBLICATION URL
     ------------------------- */
     publication_url: {
       type: String,
       trim: true,
+      default: "",
     },
 
     /* -------------------------
-       ABSTRACT
+       ABSTRACT (TinyMCE HTML)
+       ❗ DO NOT trim (keeps HTML safe)
     ------------------------- */
     abstract: {
       type: String,
       required: true,
-      trim: true,
     },
 
     /* -------------------------
-       AUTHOR IMAGE
+       AUTHOR IMAGE (FILE PATH)
     ------------------------- */
     image: {
       type: String,
@@ -75,7 +83,7 @@ const researchJournalPublicationSchema = new mongoose.Schema(
     },
 
     /* -------------------------
-       SOFT DELETE SUPPORT
+       SOFT DELETE
     ------------------------- */
     isDeleted: {
       type: Boolean,

@@ -8,7 +8,6 @@ const router = express.Router();
 
 /* ===============================
    UPLOAD DIRECTORY
-   src/uploads/research-journal-publication
 ================================ */
 const uploadDir = path.join(
   process.cwd(),
@@ -40,7 +39,6 @@ const upload = multer({ storage });
 /* =====================================================
    GET ALL JOURNAL PUBLICATIONS
    GET /api/research-journal-publication
-   (Optional filter: ?year=2024-25)
 ===================================================== */
 router.get("/", async (req, res) => {
   try {
@@ -106,16 +104,19 @@ router.post("/", upload.single("image"), async (req, res) => {
       publication_title,
       authors,
       journal_name,
+      volume,
       publication_url,
       abstract,
     } = req.body;
 
+    /* REQUIRED FIELD CHECK */
     if (
       !academic_year ||
       !author_name ||
       !publication_title ||
       !authors ||
       !journal_name ||
+      !volume ||
       !abstract
     ) {
       return res.status(400).json({
@@ -130,7 +131,8 @@ router.post("/", upload.single("image"), async (req, res) => {
       publication_title,
       authors,
       journal_name,
-      publication_url,
+      volume,
+      publication_url: publication_url || "",
       abstract,
       image: req.file
         ? `uploads/research-journal-publication/${req.file.filename}`
@@ -166,6 +168,9 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       });
     }
 
+    /* ----------------------------
+       NORMAL FIELD UPDATES
+    ---------------------------- */
     const fields = [
       "academic_year",
       "author_name",
@@ -182,6 +187,21 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       }
     });
 
+    /* ----------------------------
+       VOLUME (SPECIAL HANDLING)
+    ---------------------------- */
+    if (req.body.volume !== undefined) {
+      if (req.body.volume === "") {
+        // 🔥 REMOVE volume field
+        publication.volume = undefined;
+      } else {
+        publication.volume = req.body.volume;
+      }
+    }
+
+    /* ----------------------------
+       IMAGE UPDATE
+    ---------------------------- */
     if (req.file) {
       publication.image = `uploads/research-journal-publication/${req.file.filename}`;
     }
