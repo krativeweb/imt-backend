@@ -87,12 +87,7 @@ router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { title } = req.body;
 
-    if (!title) {
-      return res.status(400).json({
-        success: false,
-        message: "Title is required",
-      });
-    }
+
 
     if (!req.file) {
       return res.status(400).json({
