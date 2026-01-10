@@ -74,6 +74,7 @@ import corporateConnectRoutes from "./routes/corporateConnect.routes.js";
 import pgdmadmission from "./routes/pgdmadmission.routes.js";
 import studenttutorials from "./routes/studenttutorials.routes.js";
 import newsletterRoutes from "./routes/newsletter.routes.js";
+import newsletterSeoRoutes from "./routes/newsletterSeo.routes.js";
 dotenv.config();
 connectDB();
 
@@ -203,6 +204,7 @@ app.use("/api/corporate-connect", corporateConnectRoutes);
 app.use("/api/pgdm-admission", pgdmadmission);
 app.use("/api/student-tutorials", studenttutorials);
 app.use("/api/newsletters", newsletterRoutes);
+app.use("/api/newsletter-seo", newsletterSeoRoutes);
 // Error handlers  
 app.use(notFound);
 app.use(errorHandler);
