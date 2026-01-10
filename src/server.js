@@ -75,6 +75,7 @@ import pgdmadmission from "./routes/pgdmadmission.routes.js";
 import studenttutorials from "./routes/studenttutorials.routes.js";
 import newsletterRoutes from "./routes/newsletter.routes.js";
 import newsletterSeoRoutes from "./routes/newsletterSeo.routes.js";
+import programofferedadmission from "./routes/programOfferedAdmission.routes.js";
 dotenv.config();
 connectDB();
 
@@ -205,6 +206,8 @@ app.use("/api/pgdm-admission", pgdmadmission);
 app.use("/api/student-tutorials", studenttutorials);
 app.use("/api/newsletters", newsletterRoutes);
 app.use("/api/newsletter-seo", newsletterSeoRoutes);
+app.use("/api/program-offered-admission", programofferedadmission);
+
 // Error handlers  
 app.use(notFound);
 app.use(errorHandler);
