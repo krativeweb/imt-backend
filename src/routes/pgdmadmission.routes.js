@@ -14,21 +14,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /* ---------------------------------------------------
-   PGDM FINANCE BANNER UPLOAD DIRECTORY
-   src/uploads/pgdm-admission/banner
+   UPLOAD DIRECTORIES
 --------------------------------------------------- */
 const uploadBaseDir = path.join(__dirname, "../uploads/pgdm-admission");
+
 const bannerDir = path.join(uploadBaseDir, "banner");
+const accreditationDir = path.join(uploadBaseDir, "accreditation");
+const campusDir = path.join(uploadBaseDir, "campus");
 
 // Ensure folders exist
-if (!fs.existsSync(bannerDir)) {
-  fs.mkdirSync(bannerDir, { recursive: true });
-}
+[bannerDir, accreditationDir, campusDir].forEach((dir) => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+});
 
 /* ---------------------------------------------------
-   🔥 SERVE UPLOADS FROM THIS ROUTER ONLY
-   URL:
-   /api/pgdm-admission/uploads/pgdm-admission/banner/filename.png
+   STATIC FILE SERVING
 --------------------------------------------------- */
 router.use(
   "/uploads",
@@ -36,25 +36,30 @@ router.use(
 );
 
 /* ---------------------------------------------------
-   MULTER CONFIG (PGDM FINANCE)
+   MULTER CONFIG
 --------------------------------------------------- */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, bannerDir);
+    if (file.fieldname === "banner_image") {
+      cb(null, bannerDir);
+    } else if (file.fieldname === "accreditation_images") {
+      cb(null, accreditationDir);
+    } else if (file.fieldname === "life_imt_Hyderabad_images") {
+      cb(null, campusDir);
+    } else {
+      cb(null, uploadBaseDir);
+    }
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    const filename = `${Date.now()}-${Math.round(
-      Math.random() * 1e9
-    )}${ext}`;
-    cb(null, filename);
+    cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
   },
 });
 
 const upload = multer({ storage });
 
 /* ---------------------------------------------------
-   GET PGDM FINANCE (ADMIN TABLE – ARRAY)
+   GET (ADMIN – ARRAY)
 --------------------------------------------------- */
 router.get("/", async (req, res) => {
   try {
@@ -62,18 +67,14 @@ router.get("/", async (req, res) => {
       page_slug: "pgdm-admission",
     }).lean();
 
-    // ✅ Always return array for admin table
     res.json(data || []);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
 /* ---------------------------------------------------
-   GET PGDM FINANCE BY SLUG (FRONTEND – OBJECT)
+   GET BY SLUG (FRONTEND – OBJECT)
 --------------------------------------------------- */
 router.get("/slug/:slug", async (req, res) => {
   try {
@@ -84,53 +85,94 @@ router.get("/slug/:slug", async (req, res) => {
     if (!data) {
       return res.status(404).json({
         success: false,
-        message: "PGDM Finance data not found",
+        message: "PGDM Admission data not found",
       });
     }
 
-    // ✅ Return single object for frontend
     res.json(data);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
 /* ---------------------------------------------------
-   UPDATE PGDM FINANCE (SEO + CONTENT + IMAGE)
+   UPDATE PGDM ADMISSION (FULL)
 --------------------------------------------------- */
 router.put(
   "/:id",
-  upload.single("banner_image"),
+  upload.fields([
+    { name: "banner_image", maxCount: 1 },
+    { name: "accreditation_images", maxCount: 20 },
+    { name: "life_imt_Hyderabad_images", maxCount: 20 },
+  ]),
   async (req, res) => {
     try {
+      const body = req.body;
+      const files = req.files;
+
+      /* ---------------- TEXT / SEO ---------------- */
       const updateData = {
-        /* -------- SEO -------- */
-        meta_title: req.body.meta_title,
-        meta_description: req.body.meta_description,
-        meta_keywords: req.body.meta_keywords,
-        meta_canonical: req.body.meta_canonical,
+        page_title: body.page_title,
+        page_slug: body.page_slug,
 
-        /* -------- BANNER -------- */
-        banner_text: req.body.banner_text,
+        meta_title: body.meta_title,
+        meta_description: body.meta_description,
+        meta_keywords: body.meta_keywords,
+        meta_canonical: body.meta_canonical,
 
-        /* -------- PGDM FINANCE CONTENT -------- */
-        pgdm_finance: req.body.pgdm_finance,
-        curriculum: req.body.curriculum,
-        key_features: req.body.key_features,
-        program_outcome: req.body.program_outcome,
-        pedagogy: req.body.pedagogy,
-        career_opportunities: req.body.career_opportunities,
-        competency_goal: req.body.competency_goal,
+        banner_text: body.banner_text,
+
+        features_section: body.features_section,
+        advantage_of_imt_hyderabad: body.advantage_of_imt_hyderabad,
+        advantage_of_imt_blocks: body.advantage_of_imt_blocks,
+        impeccable_placement: body.impeccable_placement,
+        elligibility: body.elligibility,
+        remember_important_dates: body.remember_important_dates,
+        admission_process: body.admission_process,
+        admission_information: body.admission_information,
+        program_highlights: body.program_highlights,
+        life_imt_Hyderabad_campus: body.life_imt_Hyderabad_campus,
       };
 
-      /* ---------- Banner Image ---------- */
-      if (req.file) {
+      /* ---------------- BANNER IMAGE ---------------- */
+      if (files?.banner_image?.length) {
         updateData.banner_image =
-          `/api/pgdm-admission/uploads/pgdm-admission/banner/${req.file.filename}`;
+          `/api/pgdm-admission/uploads/pgdm-admission/banner/${files.banner_image[0].filename}`;
       }
+
+      /* ---------------- ACCREDITATION IMAGES ---------------- */
+      const existingAccreditation =
+        body["existing_accreditation_images[]"]
+          ? [].concat(body["existing_accreditation_images[]"])
+          : [];
+
+      const newAccreditation =
+        files?.accreditation_images?.map(
+          (f) =>
+            `/api/pgdm-admission/uploads/pgdm-admission/accreditation/${f.filename}`
+        ) || [];
+
+      updateData.accreditation_images = [
+        ...existingAccreditation,
+        ...newAccreditation,
+      ];
+
+      /* ---------------- CAMPUS IMAGES ---------------- */
+      const existingCampus =
+        body["existing_campus_images[]"]
+          ? [].concat(body["existing_campus_images[]"])
+          : [];
+
+      const newCampus =
+        files?.life_imt_Hyderabad_images?.map(
+          (f) =>
+            `/api/pgdm-admission/uploads/pgdm-admission/campus/${f.filename}`
+        ) || [];
+
+      updateData.life_imt_Hyderabad_images = [
+        ...existingCampus,
+        ...newCampus,
+      ];
 
       const updated = await PgdmFinance.findByIdAndUpdate(
         req.params.id,
@@ -141,20 +183,17 @@ router.put(
       if (!updated) {
         return res.status(404).json({
           success: false,
-          message: "PGDM Finance record not found",
+          message: "PGDM Admission record not found",
         });
       }
 
       res.json({
         success: true,
-        message: "PGDM Finance updated successfully",
+        message: "PGDM Admission updated successfully",
         data: updated,
       });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: error.message,
-      });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
     }
   }
 );
