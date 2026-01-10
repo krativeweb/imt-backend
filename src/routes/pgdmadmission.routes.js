@@ -3,7 +3,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import PgdmFinance from "../models/PgdmFinance.js";
+import PgdmFinance from "../models/PgdmAdmission.js";
 
 const router = express.Router();
 
@@ -15,9 +15,9 @@ const __dirname = path.dirname(__filename);
 
 /* ---------------------------------------------------
    PGDM FINANCE BANNER UPLOAD DIRECTORY
-   src/uploads/pgdm-finance/banner
+   src/uploads/pgdm-admission/banner
 --------------------------------------------------- */
-const uploadBaseDir = path.join(__dirname, "../uploads/pgdm-finance");
+const uploadBaseDir = path.join(__dirname, "../uploads/pgdm-admission");
 const bannerDir = path.join(uploadBaseDir, "banner");
 
 // Ensure folders exist
@@ -28,7 +28,7 @@ if (!fs.existsSync(bannerDir)) {
 /* ---------------------------------------------------
    🔥 SERVE UPLOADS FROM THIS ROUTER ONLY
    URL:
-   /api/pgdm-finance/uploads/pgdm-finance/banner/filename.png
+   /api/pgdm-admission/uploads/pgdm-admission/banner/filename.png
 --------------------------------------------------- */
 router.use(
   "/uploads",
@@ -59,7 +59,7 @@ const upload = multer({ storage });
 router.get("/", async (req, res) => {
   try {
     const data = await PgdmFinance.find({
-      page_slug: "pgdm-finance",
+      page_slug: "pgdm-admission",
     }).lean();
 
     // ✅ Always return array for admin table
@@ -129,7 +129,7 @@ router.put(
       /* ---------- Banner Image ---------- */
       if (req.file) {
         updateData.banner_image =
-          `/api/pgdm-finance/uploads/pgdm-finance/banner/${req.file.filename}`;
+          `/api/pgdm-admission/uploads/pgdm-admission/banner/${req.file.filename}`;
       }
 
       const updated = await PgdmFinance.findByIdAndUpdate(
