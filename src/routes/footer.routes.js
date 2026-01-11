@@ -103,55 +103,56 @@ router.put(
         });
       }
 
-      /* ---------- BASIC FIELDS ---------- */
-      footer.address = req.body.address || "";
-      footer.email = req.body.email || "";
-      footer.phone = req.body.phone || "";
+      /* ================= BASIC FIELDS ================= */
+      footer.address = req.body.address ?? footer.address;
+      footer.email = req.body.email ?? footer.email;
+      footer.phone = req.body.phone ?? footer.phone;
 
-      footer.facebook_url = req.body.facebook_url || "";
-      footer.linkedin_url = req.body.linkedin_url || "";
-      footer.instagram_url = req.body.instagram_url || "";
-      footer.youtube_url = req.body.youtube_url || "";
+      footer.facebook_url = req.body.facebook_url ?? footer.facebook_url;
+      footer.linkedin_url = req.body.linkedin_url ?? footer.linkedin_url;
+      footer.instagram_url = req.body.instagram_url ?? footer.instagram_url;
+      footer.youtube_url = req.body.youtube_url ?? footer.youtube_url;
 
-      footer.copyright_text = req.body.copyright_text || "";
+      footer.copyright_text =
+        req.body.copyright_text ?? footer.copyright_text;
 
-      /* ---------- EXISTING ACCREDITATIONS ---------- */
+      /* ================= ACCREDITATIONS ================= */
+      let accreditations = footer.accreditations || [];
+
       if (req.body["existing_accreditations[]"]) {
-        footer.accreditations = Array.isArray(
-          req.body["existing_accreditations[]"]
-        )
+        accreditations = Array.isArray(req.body["existing_accreditations[]"])
           ? req.body["existing_accreditations[]"]
           : [req.body["existing_accreditations[]"]];
-      } else {
-        footer.accreditations = [];
       }
 
-      /* ---------- NEW ACCREDITATIONS ---------- */
       if (req.files?.accreditations) {
         req.files.accreditations.forEach((file) => {
-          footer.accreditations.push(
+          accreditations.push(
             `/api/footer/uploads/footer/accreditations/${file.filename}`
           );
         });
       }
 
-      /* ---------- EXISTING MEMBERS ---------- */
+      footer.accreditations = accreditations;
+
+      /* ================= MEMBERS ================= */
+      let members = footer.members || [];
+
       if (req.body["existing_members[]"]) {
-        footer.members = Array.isArray(req.body["existing_members[]"])
+        members = Array.isArray(req.body["existing_members[]"])
           ? req.body["existing_members[]"]
           : [req.body["existing_members[]"]];
-      } else {
-        footer.members = [];
       }
 
-      /* ---------- NEW MEMBERS ---------- */
       if (req.files?.members) {
         req.files.members.forEach((file) => {
-          footer.members.push(
+          members.push(
             `/api/footer/uploads/footer/members/${file.filename}`
           );
         });
       }
+
+      footer.members = members;
 
       await footer.save();
 
@@ -161,9 +162,14 @@ router.put(
         data: footer,
       });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
     }
   }
 );
+
 
 export default router;

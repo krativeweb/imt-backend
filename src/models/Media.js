@@ -49,38 +49,7 @@ const MediaSchema = new mongoose.Schema(
       default: "",
     },
 
-    /* ---------------- MEDIA ROOM CONTENT ---------------- */
-    media_room_2024: {
-      type: String,
-      default: "",
-    },
-
-    media_room_2022: {
-      type: String,
-      default: "",
-    },
-
-    media_room_2019: {
-      type: String,
-      default: "",
-    },
-
-    media_room_2018: {
-      type: String,
-      default: "",
-    },
-
-    media_room_2016: {
-      type: String,
-      default: "",
-    },
-
-    media_room_2015: {
-      type: String,
-      default: "",
-    },
-
-    /* ---------------- OPTIONAL SOFT DELETE ---------------- */
+    /* ---------------- SOFT DELETE ---------------- */
     isDeleted: {
       type: Boolean,
       default: false,
@@ -98,5 +67,5 @@ const MediaSchema = new mongoose.Schema(
 export default mongoose.model(
   "Media",
   MediaSchema,
-  "media_room"
+  "media"
 );

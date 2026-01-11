@@ -7,73 +7,73 @@ import Media from "../models/Media.js";
 
 const router = express.Router();
 
-/* ---------------------------------------------------
+/* ===================================================
    __DIRNAME FIX (ESM)
---------------------------------------------------- */
+=================================================== */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/* ---------------------------------------------------
-   MEDIA BANNER UPLOAD DIRECTORY
-   src/uploads/media/banner
---------------------------------------------------- */
+/* ===================================================
+   UPLOAD DIRECTORY
+   uploads/media/banner
+=================================================== */
 const uploadBaseDir = path.join(__dirname, "../uploads/media");
 const bannerDir = path.join(uploadBaseDir, "banner");
 
-/* Ensure folders exist */
+/* Ensure directory exists */
 if (!fs.existsSync(bannerDir)) {
   fs.mkdirSync(bannerDir, { recursive: true });
 }
 
-/* ---------------------------------------------------
-   STATIC FILE SERVING (ROUTER SCOPE)
+/* ===================================================
+   STATIC FILE SERVING
    URL:
-   /api/media/uploads/media/banner/filename.png
---------------------------------------------------- */
+   /api/media/uploads/media/banner/filename.jpg
+=================================================== */
 router.use(
   "/uploads",
   express.static(path.join(__dirname, "../uploads"))
 );
 
-/* ---------------------------------------------------
-   MULTER CONFIG (MEDIA)
---------------------------------------------------- */
+/* ===================================================
+   MULTER CONFIG
+=================================================== */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, bannerDir);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    const filename = `${Date.now()}-${Math.round(
-      Math.random() * 1e9
-    )}${ext}`;
-    cb(null, filename);
+    cb(
+      null,
+      `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`
+    );
   },
 });
 
 const upload = multer({ storage });
 
-/* ---------------------------------------------------
+/* ===================================================
    GET MEDIA (ADMIN – ARRAY)
---------------------------------------------------- */
+=================================================== */
 router.get("/", async (req, res) => {
   try {
-    const data = await Media.find({
-      isDeleted: false,
-    }).lean();
+    const data = await Media.find({ isDeleted: false })
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.json(data || []);
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      message: error.message,
     });
   }
 });
 
-/* ---------------------------------------------------
+/* ===================================================
    GET MEDIA BY SLUG (FRONTEND – OBJECT)
---------------------------------------------------- */
+=================================================== */
 router.get("/slug/:slug", async (req, res) => {
   try {
     const data = await Media.findOne({
@@ -84,7 +84,7 @@ router.get("/slug/:slug", async (req, res) => {
     if (!data) {
       return res.status(404).json({
         success: false,
-        message: "Media content not found",
+        message: "Media page not found",
       });
     }
 
@@ -92,14 +92,14 @@ router.get("/slug/:slug", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
+      message: error.message,
     });
   }
 });
 
-/* ---------------------------------------------------
-   UPDATE MEDIA (SEO + BANNER + MEDIA ROOM)
---------------------------------------------------- */
+/* ===================================================
+   UPDATE MEDIA (SEO + BANNER ONLY)
+=================================================== */
 router.put(
   "/:id",
   upload.single("banner_image"),
@@ -114,17 +114,9 @@ router.put(
 
         /* -------- BANNER -------- */
         banner_text: req.body.banner_text,
-
-        /* -------- MEDIA ROOM CONTENT -------- */
-        media_room_2024: req.body.media_room_2024,
-        media_room_2022: req.body.media_room_2022,
-        media_room_2019: req.body.media_room_2019,
-        media_room_2018: req.body.media_room_2018,
-        media_room_2016: req.body.media_room_2016,
-        media_room_2015: req.body.media_room_2015,
       };
 
-      /* ---------- Banner Image ---------- */
+      /* -------- Banner Image -------- */
       if (req.file) {
         updateData.banner_image =
           `/api/media/uploads/media/banner/${req.file.filename}`;
@@ -145,13 +137,13 @@ router.put(
 
       res.json({
         success: true,
-        message: "Media content updated successfully",
+        message: "Media updated successfully",
         data: updated,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error.message,
+        message: error.message,
       });
     }
   }
