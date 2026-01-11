@@ -3,41 +3,41 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import PgdmFinance from "../models/PgdmAdmission.js";
+import PgdmAdmission from "../models/PgdmAdmission.js";
 
 const router = express.Router();
 
-/* ---------------------------------------------------
+/* ===================================================
    __DIRNAME FIX (ESM)
---------------------------------------------------- */
+=================================================== */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/* ---------------------------------------------------
+/* ===================================================
    UPLOAD DIRECTORIES
---------------------------------------------------- */
+=================================================== */
 const uploadBaseDir = path.join(__dirname, "../uploads/pgdm-admission");
 
 const bannerDir = path.join(uploadBaseDir, "banner");
 const accreditationDir = path.join(uploadBaseDir, "accreditation");
 const campusDir = path.join(uploadBaseDir, "campus");
 
-// Ensure folders exist
+/* Ensure folders exist */
 [bannerDir, accreditationDir, campusDir].forEach((dir) => {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
-/* ---------------------------------------------------
+/* ===================================================
    STATIC FILE SERVING
---------------------------------------------------- */
+=================================================== */
 router.use(
   "/uploads",
   express.static(path.join(__dirname, "../uploads"))
 );
 
-/* ---------------------------------------------------
+/* ===================================================
    MULTER CONFIG
---------------------------------------------------- */
+=================================================== */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (file.fieldname === "banner_image") {
@@ -58,46 +58,57 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-/* ---------------------------------------------------
+/* ===================================================
    GET (ADMIN – ARRAY)
---------------------------------------------------- */
+=================================================== */
 router.get("/", async (req, res) => {
   try {
-    const data = await PgdmFinance.find({
+    const data = await PgdmAdmission.find({
       page_slug: "pgdm-admission",
-    }).lean();
+      isDeleted: false,
+    }).sort({ createdAt: -1 });
 
     res.json(data || []);
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 });
 
-/* ---------------------------------------------------
+/* ===================================================
    GET BY SLUG (FRONTEND – OBJECT)
---------------------------------------------------- */
+=================================================== */
 router.get("/slug/:slug", async (req, res) => {
   try {
-    const data = await PgdmFinance.findOne({
+    const page = await PgdmAdmission.findOne({
       page_slug: req.params.slug,
-    }).lean();
+      isDeleted: false,
+    });
 
-    if (!data) {
+    if (!page) {
       return res.status(404).json({
         success: false,
-        message: "PGDM Admission data not found",
+        message: "PGDM Admission page not found",
       });
     }
 
-    res.json(data);
+    res.json(page);
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 });
 
-/* ---------------------------------------------------
-   UPDATE PGDM ADMISSION (FULL)
---------------------------------------------------- */
+/* ===================================================
+   UPDATE PGDM ADMISSION (SAFE MULTI IMAGE)
+=================================================== */
+/* ===================================================
+   UPDATE PGDM ADMISSION (100% SAFE IMAGE MERGE)
+=================================================== */
 router.put(
   "/:id",
   upload.fields([
@@ -108,20 +119,27 @@ router.put(
   async (req, res) => {
     try {
       const body = req.body;
-      const files = req.files;
+      const files = req.files || {};
+
+      /* 🔥 FETCH EXISTING RECORD FIRST */
+      const existingDoc = await PgdmAdmission.findById(req.params.id);
+
+      if (!existingDoc) {
+        return res.status(404).json({
+          success: false,
+          message: "PGDM Admission record not found",
+        });
+      }
 
       /* ---------------- TEXT / SEO ---------------- */
       const updateData = {
         page_title: body.page_title,
         page_slug: body.page_slug,
-
         meta_title: body.meta_title,
         meta_description: body.meta_description,
         meta_keywords: body.meta_keywords,
         meta_canonical: body.meta_canonical,
-
         banner_text: body.banner_text,
-
         features_section: body.features_section,
         advantage_of_imt_hyderabad: body.advantage_of_imt_hyderabad,
         advantage_of_imt_blocks: body.advantage_of_imt_blocks,
@@ -135,57 +153,57 @@ router.put(
       };
 
       /* ---------------- BANNER IMAGE ---------------- */
-      if (files?.banner_image?.length) {
+      if (files.banner_image?.length) {
         updateData.banner_image =
           `/api/pgdm-admission/uploads/pgdm-admission/banner/${files.banner_image[0].filename}`;
       }
 
-      /* ---------------- ACCREDITATION IMAGES ---------------- */
-      const existingAccreditation =
-        body["existing_accreditation_images[]"]
-          ? [].concat(body["existing_accreditation_images[]"])
-          : [];
+      /* ================= ACCREDITATION IMAGES ================= */
+      const existingAccRaw = body["existing_accreditation_images[]"];
 
-      const newAccreditation =
-        files?.accreditation_images?.map(
+      const existingAccreditations = existingAccRaw
+        ? Array.isArray(existingAccRaw)
+          ? existingAccRaw
+          : [existingAccRaw]
+        : existingDoc.accreditation_images || [];
+
+      const newAccreditations =
+        files.accreditation_images?.map(
           (f) =>
             `/api/pgdm-admission/uploads/pgdm-admission/accreditation/${f.filename}`
         ) || [];
 
       updateData.accreditation_images = [
-        ...existingAccreditation,
-        ...newAccreditation,
+        ...existingAccreditations,
+        ...newAccreditations,
       ];
 
-      /* ---------------- CAMPUS IMAGES ---------------- */
-      const existingCampus =
-        body["existing_campus_images[]"]
-          ? [].concat(body["existing_campus_images[]"])
-          : [];
+      /* ================= CAMPUS IMAGES ================= */
+      const existingCampusRaw = body["existing_campus_images[]"];
 
-      const newCampus =
-        files?.life_imt_Hyderabad_images?.map(
+      const existingCampusImages = existingCampusRaw
+        ? Array.isArray(existingCampusRaw)
+          ? existingCampusRaw
+          : [existingCampusRaw]
+        : existingDoc.life_imt_Hyderabad_images || [];
+
+      const newCampusImages =
+        files.life_imt_Hyderabad_images?.map(
           (f) =>
             `/api/pgdm-admission/uploads/pgdm-admission/campus/${f.filename}`
         ) || [];
 
       updateData.life_imt_Hyderabad_images = [
-        ...existingCampus,
-        ...newCampus,
+        ...existingCampusImages,
+        ...newCampusImages,
       ];
 
-      const updated = await PgdmFinance.findByIdAndUpdate(
+      /* ---------------- UPDATE DB ---------------- */
+      const updated = await PgdmAdmission.findByIdAndUpdate(
         req.params.id,
         updateData,
         { new: true }
       );
-
-      if (!updated) {
-        return res.status(404).json({
-          success: false,
-          message: "PGDM Admission record not found",
-        });
-      }
 
       res.json({
         success: true,
@@ -193,9 +211,13 @@ router.put(
         data: updated,
       });
     } catch (err) {
-      res.status(500).json({ success: false, error: err.message });
+      res.status(500).json({
+        success: false,
+        message: err.message,
+      });
     }
   }
 );
+
 
 export default router;
