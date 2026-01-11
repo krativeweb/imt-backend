@@ -12,6 +12,8 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import mandatoryDisclosureRoutes from "./routes/mandatoryDisclosureRoutes.js";
 import { notFound, errorHandler } from "./middlewares/errorHandler.js";
+import uploadEditorImageRoute from "./routes/uploadEditorImage.js";
+
 import studentActivitiesRoutes from "./routes/studentActivities.js";
 import photoGalleryRoutes from "./routes/photoGallery.js";
 import newsRoutes from "./routes/news.js";
@@ -108,13 +110,17 @@ app.use(
 );
 
 // Serve static files WITH proper CORS already applied from above
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"), {
+    setHeaders: (res) => {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+      res.setHeader("Content-Type", "image/webp");
+    },
+  })
+);
 
-// Optional: Extra insurance for images (not strictly needed now)
-app.use("/uploads", (req, res, next) => {
-  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
-  next();
-});
 
 // Cookie parser
 app.use(cookieParser());
@@ -141,6 +147,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.json({ message: "Secure Auth API with jose is running" });
 });
+app.use(uploadEditorImageRoute);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
