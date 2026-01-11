@@ -82,6 +82,8 @@ import campustour from "./routes/campustour.routes.js";
 import media from "./routes/media.routes.js";
 import communityconnect from "./routes/communityconnect.routes.js";
 import contactinfo from "./routes/contactinfo.routes.js";
+import footer from "./routes/footer.routes.js";
+
 dotenv.config();
 connectDB();
 
@@ -222,6 +224,7 @@ app.use("/api/campus-tour", campustour);
 app.use("/api/media", media);
 app.use("/api/community-connect", communityconnect);
 app.use("/api/contact-info", contactinfo);
+app.use("/api/footer", footer);
 
 // Error handlers  
 app.use(notFound);
