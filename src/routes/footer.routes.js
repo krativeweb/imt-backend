@@ -104,25 +104,28 @@ router.put(
       }
 
       /* ================= BASIC FIELDS ================= */
-      footer.address = req.body.address ?? footer.address;
-      footer.email = req.body.email ?? footer.email;
-      footer.phone = req.body.phone ?? footer.phone;
+      const fields = [
+        "address",
+        "email",
+        "phone",
+        "facebook_url",
+        "linkedin_url",
+        "instagram_url",
+        "youtube_url",
+        "copyright_text",
+      ];
 
-      footer.facebook_url = req.body.facebook_url ?? footer.facebook_url;
-      footer.linkedin_url = req.body.linkedin_url ?? footer.linkedin_url;
-      footer.instagram_url = req.body.instagram_url ?? footer.instagram_url;
-      footer.youtube_url = req.body.youtube_url ?? footer.youtube_url;
-
-      footer.copyright_text =
-        req.body.copyright_text ?? footer.copyright_text;
+      fields.forEach((field) => {
+        if (req.body[field] !== undefined) {
+          footer[field] = req.body[field];
+        }
+      });
 
       /* ================= ACCREDITATIONS ================= */
       let accreditations = footer.accreditations || [];
 
-      if (req.body["existing_accreditations[]"]) {
-        accreditations = Array.isArray(req.body["existing_accreditations[]"])
-          ? req.body["existing_accreditations[]"]
-          : [req.body["existing_accreditations[]"]];
+      if (req.body.existing_accreditations !== undefined) {
+        accreditations = JSON.parse(req.body.existing_accreditations);
       }
 
       if (req.files?.accreditations) {
@@ -138,10 +141,8 @@ router.put(
       /* ================= MEMBERS ================= */
       let members = footer.members || [];
 
-      if (req.body["existing_members[]"]) {
-        members = Array.isArray(req.body["existing_members[]"])
-          ? req.body["existing_members[]"]
-          : [req.body["existing_members[]"]];
+      if (req.body.existing_members !== undefined) {
+        members = JSON.parse(req.body.existing_members);
       }
 
       if (req.files?.members) {
@@ -162,7 +163,7 @@ router.put(
         data: footer,
       });
     } catch (error) {
-      console.error(error);
+      console.error("Footer update error:", error);
       res.status(500).json({
         success: false,
         message: error.message,
@@ -170,6 +171,7 @@ router.put(
     }
   }
 );
+
 
 
 export default router;
