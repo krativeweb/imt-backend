@@ -3,32 +3,32 @@ import MediaRoom from "../models/MediaRoom.js";
 
 const router = express.Router();
 
-/* ===============================
+/* =====================================================
    GET ALL MEDIA (NON-DELETED)
    GET /api/media-room
-================================ */
+===================================================== */
 router.get("/", async (req, res) => {
   try {
-    const media = await MediaRoom.find({
-      isDeleted: false,
-    }).sort({ year: -1, createdAt: -1 });
+    const media = await MediaRoom.find({ isDeleted: false })
+      .sort({ year: -1, createdAt: -1 });
 
-    res.json({
+    return res.status(200).json({
       success: true,
       data: media,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (error) {
+    console.error("GET MEDIA ERROR:", error);
+    return res.status(500).json({
       success: false,
-      message: err.message,
+      message: "Failed to fetch media",
     });
   }
 });
 
-/* ===============================
+/* =====================================================
    GET SINGLE MEDIA
    GET /api/media-room/:id
-================================ */
+===================================================== */
 router.get("/:id", async (req, res) => {
   try {
     const media = await MediaRoom.findOne({
@@ -43,55 +43,52 @@ router.get("/:id", async (req, res) => {
       });
     }
 
-    res.json({
+    return res.status(200).json({
       success: true,
       data: media,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (error) {
+    console.error("GET MEDIA BY ID ERROR:", error);
+    return res.status(500).json({
       success: false,
-      message: err.message,
+      message: "Failed to fetch media",
     });
   }
 });
 
-/* ===============================
+/* =====================================================
    ADD MEDIA
    POST /api/media-room
-================================ */
+===================================================== */
 router.post("/", async (req, res) => {
   try {
     const { title, year, content } = req.body;
 
-    if (!title || !year || !content) {
-      return res.status(400).json({
-        success: false,
-        message: "Title, Year and Content are required",
-      });
-    }
-
     const media = await MediaRoom.create({
       title,
-      year,
+      year: Number(year),
       content,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       data: media,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (error) {
+    console.error("CREATE MEDIA ERROR ❌", error);
+    return res.status(500).json({
       success: false,
-      message: err.message,
+      message: error.message,
     });
   }
 });
 
-/* ===============================
+
+
+/* =====================================================
    UPDATE MEDIA
    PUT /api/media-room/:id
-================================ */
+===================================================== */
 router.put("/:id", async (req, res) => {
   try {
     const media = await MediaRoom.findOne({
@@ -106,29 +103,31 @@ router.put("/:id", async (req, res) => {
       });
     }
 
-    /* UPDATE FIELDS */
-    if (req.body.title !== undefined) media.title = req.body.title;
-    if (req.body.year !== undefined) media.year = req.body.year;
-    if (req.body.content !== undefined) media.content = req.body.content;
+    const { title, year, content } = req.body;
+
+    if (typeof title === "string") media.title = title.trim();
+    if (typeof year === "number") media.year = year;
+    if (typeof content === "string") media.content = content;
 
     await media.save();
 
-    res.json({
+    return res.status(200).json({
       success: true,
       data: media,
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (error) {
+    console.error("UPDATE MEDIA ERROR:", error);
+    return res.status(500).json({
       success: false,
-      message: err.message,
+      message: "Failed to update media",
     });
   }
 });
 
-/* ===============================
+/* =====================================================
    SOFT DELETE MEDIA
    DELETE /api/media-room/:id
-================================ */
+===================================================== */
 router.delete("/:id", async (req, res) => {
   try {
     const media = await MediaRoom.findOne({
@@ -147,14 +146,15 @@ router.delete("/:id", async (req, res) => {
     media.deletedAt = new Date();
     await media.save();
 
-    res.json({
+    return res.status(200).json({
       success: true,
       message: "Media item deleted successfully",
     });
-  } catch (err) {
-    res.status(500).json({
+  } catch (error) {
+    console.error("DELETE MEDIA ERROR:", error);
+    return res.status(500).json({
       success: false,
-      message: err.message,
+      message: "Failed to delete media",
     });
   }
 });
