@@ -86,6 +86,9 @@ import footer from "./routes/footer.routes.js";
 import mediaroom from "./routes/mediaroom.js";
 import happeningsseo from "./routes/happeningsSeo.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
+import clubcommunityseo from "./routes/clubcommunitiesseo.routes.js";
+import clubimtdata from "./routes/clubimtdata.routes.js";
+import committeesimtdata from "./routes/committeesimtdata.routes.js";
 
 dotenv.config();
 connectDB();
@@ -231,6 +234,9 @@ app.use("/api/footer", footer);
 app.use("/api/media-room", mediaroom);
 app.use("/api/happenings-seo", happeningsseo);
 app.use("/api", contactRoutes);
+app.use("/api/club-communities-seo", clubcommunityseo);
+app.use("/api/club-imt-data", clubimtdata);
+app.use("/api/committees-imt-data", committeesimtdata);
 
 // Error handlers  
 app.use(notFound);
