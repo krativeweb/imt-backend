@@ -1,12 +1,13 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
+  service: "gmail",
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false, // 🔥 REQUIRED on many VPS / Render / AWS
   },
 });
 
@@ -27,7 +28,7 @@ const sendContactEmail = async ({
   if (!to) throw new Error("Invalid category");
 
   await transporter.sendMail({
-    from: `"IMT Hyderabad Website" <${process.env.MAIL_USER}>`,
+    from: process.env.MAIL_USER, // 🔥 MUST MATCH GMAIL USER
     to,
     replyTo: email,
     subject: `New Contact Query - ${category.toUpperCase()}`,
@@ -43,4 +44,3 @@ const sendContactEmail = async ({
 };
 
 export default sendContactEmail;
-
