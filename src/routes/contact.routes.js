@@ -47,14 +47,14 @@ router.post("/contact", async (req, res) => {
       success: true,
       message: "Message sent successfully",
     });
-  } catch (error) {
-    console.error("Contact API Error:", error);
+  }  catch (error) {
+  console.error("🔥 CONTACT API ERROR FULL:", error);
 
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
+  res.status(500).json({
+    success: false,
+    message: error.message, // 👈 THIS IS KEY
+  });
+}
 });
 
 export default router;
