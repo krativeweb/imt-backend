@@ -11,8 +11,8 @@ const transporter = nodemailer.createTransport({
 });
 
 const CATEGORY_EMAIL_MAP = {
-  admissions: "admissions@imthyderabad.edu.in",
-  cro: "cro@imthyderabad.edu.in",
+  admissions: "sayanasansol.1995@gmail.com",
+  cro: "sayankolkata.1995@gmail.com",
 };
 
 const sendContactEmail = async ({
