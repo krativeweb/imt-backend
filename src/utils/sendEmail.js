@@ -7,13 +7,13 @@ const transporter = nodemailer.createTransport({
     pass: process.env.MAIL_PASS,
   },
   tls: {
-    rejectUnauthorized: false, // 🔥 REQUIRED on many VPS / Render / AWS
+    rejectUnauthorized: false, // 🔥 REQUIRED on VPS / cloud
   },
 });
 
 const CATEGORY_EMAIL_MAP = {
-  admissions: "sayanasansol.1995@gmail.com",
-  cro: "sayankolkata.1995@gmail.com",
+  admissions: "admissions@imthyderabad.edu.in",
+  cro: "cro@imthyderabad.edu.in",
 };
 
 const sendContactEmail = async ({
@@ -25,10 +25,13 @@ const sendContactEmail = async ({
   message,
 }) => {
   const to = CATEGORY_EMAIL_MAP[category];
-  if (!to) throw new Error("Invalid category");
+
+  if (!to) {
+    throw new Error("Invalid category value");
+  }
 
   await transporter.sendMail({
-    from: process.env.MAIL_USER, // 🔥 MUST MATCH GMAIL USER
+    from: process.env.MAIL_USER, // 🔥 MUST MATCH GMAIL
     to,
     replyTo: email,
     subject: `New Contact Query - ${category.toUpperCase()}`,
