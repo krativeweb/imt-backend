@@ -85,6 +85,7 @@ import contactinfo from "./routes/contactinfo.routes.js";
 import footer from "./routes/footer.routes.js";
 import mediaroom from "./routes/mediaroom.js";
 import happeningsseo from "./routes/happeningsSeo.routes.js";
+import contactRoutes from "./routes/contact.routes.js";
 
 dotenv.config();
 connectDB();
@@ -229,7 +230,7 @@ app.use("/api/contact-info", contactinfo);
 app.use("/api/footer", footer);
 app.use("/api/media-room", mediaroom);
 app.use("/api/happenings-seo", happeningsseo);
-
+app.use("/api", contactRoutes);
 
 // Error handlers  
 app.use(notFound);
