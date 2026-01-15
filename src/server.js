@@ -89,6 +89,9 @@ import contactRoutes from "./routes/contact.routes.js";
 import clubcommunityseo from "./routes/clubcommunitiesseo.routes.js";
 import clubimtdata from "./routes/clubimtdata.routes.js";
 import committeesimtdata from "./routes/committeesimtdata.routes.js";
+import galleryevent from "./routes/eventgallery.js";
+import eventcalender from "./routes/eventcalender.routes.js";
+
 
 dotenv.config();
 connectDB();
@@ -237,6 +240,8 @@ app.use("/api", contactRoutes);
 app.use("/api/club-communities-seo", clubcommunityseo);
 app.use("/api/club-imt-data", clubimtdata);
 app.use("/api/committees-imt-data", committeesimtdata);
+app.use("/api/event-gallery", galleryevent);
+app.use("/api/event-calendar", eventcalender);
 
 // Error handlers  
 app.use(notFound);
