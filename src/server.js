@@ -91,7 +91,9 @@ import clubimtdata from "./routes/clubimtdata.routes.js";
 import committeesimtdata from "./routes/committeesimtdata.routes.js";
 import galleryevent from "./routes/eventgallery.js";
 import eventcalender from "./routes/eventcalender.routes.js";
-
+import studentexchangeseo from "./routes/studentexchangeseo.routes.js";
+import outboundexchange from "./routes/outboundexchange.routes.js";
+import inboundexchange from "./routes/inboundexchange.routes.js";
 
 dotenv.config();
 connectDB();
@@ -242,6 +244,9 @@ app.use("/api/club-imt-data", clubimtdata);
 app.use("/api/committees-imt-data", committeesimtdata);
 app.use("/api/event-gallery", galleryevent);
 app.use("/api/event-calendar", eventcalender);
+app.use("/api/student-exchange-seo", studentexchangeseo);
+app.use("/api/outbound-exchange", outboundexchange);
+app.use("/api/inbound-exchange", inboundexchange);
 
 // Error handlers  
 app.use(notFound);
