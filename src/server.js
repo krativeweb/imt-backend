@@ -94,8 +94,9 @@ import eventcalender from "./routes/eventcalender.routes.js";
 import studentexchangeseo from "./routes/studentexchangeseo.routes.js";
 import outboundexchange from "./routes/outboundexchange.routes.js";
 import inboundexchange from "./routes/inboundexchange.routes.js";
+import inboundappicationform from "./routes/inboundapplicationform.routes.js";
 
-dotenv.config();
+dotenv.config();  
 connectDB();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -247,6 +248,7 @@ app.use("/api/event-calendar", eventcalender);
 app.use("/api/student-exchange-seo", studentexchangeseo);
 app.use("/api/outbound-exchange", outboundexchange);
 app.use("/api/inbound-exchange", inboundexchange);
+app.use("/api/inbound-application-form", inboundappicationform);
 
 // Error handlers  
 app.use(notFound);
