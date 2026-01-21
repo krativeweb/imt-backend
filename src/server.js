@@ -95,6 +95,7 @@ import studentexchangeseo from "./routes/studentexchangeseo.routes.js";
 import outboundexchange from "./routes/outboundexchange.routes.js";
 import inboundexchange from "./routes/inboundexchange.routes.js";
 import inboundappicationform from "./routes/inboundapplicationform.routes.js";
+import uploadEditorFileRoute from "./routes/uploadEditorFile.js";
 
 dotenv.config();  
 connectDB();
@@ -132,7 +133,6 @@ app.use(
     setHeaders: (res) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
-      res.setHeader("Content-Type", "image/webp");
     },
   })
 );
@@ -249,6 +249,7 @@ app.use("/api/student-exchange-seo", studentexchangeseo);
 app.use("/api/outbound-exchange", outboundexchange);
 app.use("/api/inbound-exchange", inboundexchange);
 app.use("/api/inbound-application-form", inboundappicationform);
+app.use(uploadEditorFileRoute);
 
 // Error handlers  
 app.use(notFound);
