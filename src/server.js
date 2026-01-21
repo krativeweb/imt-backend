@@ -95,7 +95,7 @@ import studentexchangeseo from "./routes/studentexchangeseo.routes.js";
 import outboundexchange from "./routes/outboundexchange.routes.js";
 import inboundexchange from "./routes/inboundexchange.routes.js";
 import inboundappicationform from "./routes/inboundapplicationform.routes.js";
-import uploadEditorFileRoute from "./routes/uploadEditorFile.js";
+import uploadEditorFileRoute from "./routes/editorUpload.js";
 
 dotenv.config();  
 connectDB();
