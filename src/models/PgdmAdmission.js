@@ -94,6 +94,10 @@ const PgdmAdmissionSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    know_more:{
+      type: String,
+      default: "",
+    },
 
     life_imt_Hyderabad_campus: {
       type: String,
