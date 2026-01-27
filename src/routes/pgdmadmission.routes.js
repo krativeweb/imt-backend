@@ -149,6 +149,7 @@ router.put(
         admission_process: body.admission_process,
         admission_information: body.admission_information,
         program_highlights: body.program_highlights,
+          know_more: body.know_more,
         life_imt_Hyderabad_campus: body.life_imt_Hyderabad_campus,
       };
 
