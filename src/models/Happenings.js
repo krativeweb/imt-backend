@@ -24,6 +24,12 @@ const HappeningsSchema = new mongoose.Schema(
       required: true,
     },
 
+     sortOrder: {
+      type: Number,
+      default: 0,
+      index: true,
+    },
+
     isDeleted: {
       type: Boolean,
       default: false,
