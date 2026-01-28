@@ -5,7 +5,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import path from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from "url"; 
 
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
