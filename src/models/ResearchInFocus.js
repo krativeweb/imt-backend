@@ -65,7 +65,7 @@ const researchInFocusSchema = new mongoose.Schema(
     meta_title: {
       type: String,
       trim: true,
-      maxlength: 60,
+      
     },
 
     meta_keywords: {
@@ -76,7 +76,7 @@ const researchInFocusSchema = new mongoose.Schema(
     meta_description: {
       type: String,
       trim: true,
-      maxlength: 160,
+    
     },
 
     meta_canonical: {

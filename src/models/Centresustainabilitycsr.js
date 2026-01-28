@@ -24,14 +24,14 @@ const CentreSustainabilityCSRSchema = new mongoose.Schema(
     meta_title: {
       type: String,
       trim: true,
-      maxlength: 60,
+      
       default: "",
     },
 
     meta_description: {
       type: String,
       trim: true,
-      maxlength: 160,
+    
       default: "",
     },
 

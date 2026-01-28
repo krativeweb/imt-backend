@@ -19,12 +19,12 @@ const workshopsConferencesSeoSchema = new mongoose.Schema(
 
     meta_title: {
       type: String,
-      maxlength: 60,
+      
     },
 
     meta_description: {
       type: String,
-      maxlength: 160,
+    
     },
 
     meta_keywords: String,

@@ -19,13 +19,13 @@ const PgdmMarketingSchema = new mongoose.Schema(
     meta_title: {
       type: String,
       trim: true,
-      maxlength: 60,
+      
     },
 
     meta_description: {
       type: String,
       trim: true,
-      maxlength: 160,
+    
     },
 
     meta_keywords: {
