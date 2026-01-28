@@ -107,8 +107,9 @@ const app = express();
 
 // CORS FIRST — this sets headers on ALL responses (including /uploads)
 const allowedOrigins = process.env.CLIENT_URLS
-  ? process.env.CLIENT_URLS.split(",")
+  ? process.env.CLIENT_URLS.split(",").map(o => o.trim())
   : [];
+
 
 app.use(
   cors({
