@@ -88,7 +88,7 @@ router.get("/:id", async (req, res) => {
 ================================ */
 router.post("/", upload.array("images", 10), async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description,sortOrder  } = req.body;
 
     if (!title || !description) {
       return res.status(400).json({
@@ -112,6 +112,7 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       title,
       description,
       images,
+       sortOrder: Number(sortOrder) || 0,
     });
 
     res.status(201).json({
@@ -145,11 +146,13 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       });
     }
 
-    const { title, description } = req.body;
+    const { title, description,sortOrder  } = req.body;
 
     if (title) research.title = title;
     if (description) research.description = description;
 
+     if (sortOrder !== undefined)
+  research.sortOrder = Number(sortOrder);
     /* ===============================
        REMOVE IMAGES
     ================================ */
