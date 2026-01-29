@@ -11,8 +11,8 @@ router.get("/", async (req, res) => {
     const events = await Event.find({
       isDeleted: false,
     }).sort({
-      event_date: 1,
-      event_time: 1, // 👈 sort by time also
+      event_date: -1,
+      event_time: -1, // 👈 sort by time also
     });
 
     res.json({
