@@ -96,6 +96,7 @@ import outboundexchange from "./routes/outboundexchange.routes.js";
 import inboundexchange from "./routes/inboundexchange.routes.js";
 import inboundappicationform from "./routes/inboundapplicationform.routes.js";
 import uploadEditorFileRoute from "./routes/editorUpload.js";
+import privacypolicy from "./routes/privacyPolicy.routes.js";
 
 dotenv.config();  
 connectDB();
@@ -258,6 +259,7 @@ app.use("/api/outbound-exchange", outboundexchange);
 app.use("/api/inbound-exchange", inboundexchange);
 app.use("/api/inbound-application-form", inboundappicationform);
 app.use(uploadEditorFileRoute);
+app.use("/api/privacy-policy", privacypolicy);
 
 // Error handlers  
 app.use(notFound);
