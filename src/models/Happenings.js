@@ -24,10 +24,11 @@ const HappeningsSchema = new mongoose.Schema(
       required: true,
     },
 
-     sortOrder: {
-      type: Number,
-      default: 0,
-      index: true,
+    // ✅ DATE USED FOR SORTING
+    sortDate: {
+      type: Date,
+      required: true,
+      index: true, // important for sorting performance
     },
 
     isDeleted: {

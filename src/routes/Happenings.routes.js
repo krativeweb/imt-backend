@@ -2,19 +2,14 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import ResearchInFocus from "../models/Happenings.js";
+import Happenings from "../models/Happenings.js";
 
 const router = express.Router();
 
 /* ===============================
    UPLOAD DIRECTORY
 ================================ */
-const uploadDir = path.join(
-  process.cwd(),
-  "src",
-  "uploads",
-  "happenings"
-);
+const uploadDir = path.join(process.cwd(), "src", "uploads", "happenings");
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -36,19 +31,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB per image
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
 /* ===============================
-   GET ALL (NON-DELETED)
+   GET ALL (SORT BY DATE DESC)
 ================================ */
 router.get("/", async (req, res) => {
   try {
-    const research = await ResearchInFocus.find({
-      isDeleted: false,
-    }).sort({ createdAt: -1 });
+    const happenings = await Happenings.find({ isDeleted: false })
+      .sort({ sortDate: -1 }); // ✅ DESCENDING DATE
 
-    res.json({ success: true, data: research });
+    res.json({ success: true, data: happenings });
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -62,19 +56,19 @@ router.get("/", async (req, res) => {
 ================================ */
 router.get("/:id", async (req, res) => {
   try {
-    const research = await ResearchInFocus.findOne({
+    const happening = await Happenings.findOne({
       _id: req.params.id,
       isDeleted: false,
     });
 
-    if (!research) {
+    if (!happening) {
       return res.status(404).json({
         success: false,
-        message: "Happenings not found",
+        message: "Happening not found",
       });
     }
 
-    res.json({ success: true, data: research });
+    res.json({ success: true, data: happening });
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -84,16 +78,16 @@ router.get("/:id", async (req, res) => {
 });
 
 /* ===============================
-   ADD HAPPENINGS (MULTIPLE IMAGES)
+   ADD HAPPENING
 ================================ */
 router.post("/", upload.array("images", 10), async (req, res) => {
   try {
-    const { title, description,sortOrder  } = req.body;
+    const { title, description, sortDate } = req.body;
 
-    if (!title || !description) {
+    if (!title || !description || !sortDate) {
       return res.status(400).json({
         success: false,
-        message: "Title and description are required",
+        message: "Title, description and date are required",
       });
     }
 
@@ -108,16 +102,16 @@ router.post("/", upload.array("images", 10), async (req, res) => {
       (file) => `uploads/happenings/${file.filename}`
     );
 
-    const research = await ResearchInFocus.create({
+    const happening = await Happenings.create({
       title,
       description,
+      sortDate: new Date(sortDate), // ✅ calendar date
       images,
-       sortOrder: Number(sortOrder) || 0,
     });
 
     res.status(201).json({
       success: true,
-      data: research,
+      data: happening,
     });
   } catch (err) {
     res.status(500).json({
@@ -128,31 +122,28 @@ router.post("/", upload.array("images", 10), async (req, res) => {
 });
 
 /* ===============================
-   UPDATE HAPPENINGS
-   - add new images
-   - remove existing images
+   UPDATE HAPPENING
 ================================ */
 router.put("/:id", upload.array("images", 10), async (req, res) => {
   try {
-    const research = await ResearchInFocus.findOne({
+    const happening = await Happenings.findOne({
       _id: req.params.id,
       isDeleted: false,
     });
 
-    if (!research) {
+    if (!happening) {
       return res.status(404).json({
         success: false,
-        message: "Happenings not found",
+        message: "Happening not found",
       });
     }
 
-    const { title, description,sortOrder  } = req.body;
+    const { title, description, sortDate } = req.body;
 
-    if (title) research.title = title;
-    if (description) research.description = description;
+    if (title) happening.title = title;
+    if (description) happening.description = description;
+    if (sortDate) happening.sortDate = new Date(sortDate); // ✅
 
-     if (sortOrder !== undefined)
-  research.sortOrder = Number(sortOrder);
     /* ===============================
        REMOVE IMAGES
     ================================ */
@@ -161,11 +152,10 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
         ? req.body.remove_images
         : [req.body.remove_images];
 
-      research.images = research.images.filter(
+      happening.images = happening.images.filter(
         (img) => !removeList.includes(img)
       );
 
-      // delete files from disk
       removeList.forEach((imgPath) => {
         const fullPath = path.join(process.cwd(), "src", imgPath);
         if (fs.existsSync(fullPath)) {
@@ -181,14 +171,14 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
       const newImages = req.files.map(
         (file) => `uploads/happenings/${file.filename}`
       );
-      research.images.push(...newImages);
+      happening.images.push(...newImages);
     }
 
-    await research.save();
+    await happening.save();
 
     res.json({
       success: true,
-      data: research,
+      data: happening,
     });
   } catch (err) {
     res.status(500).json({
@@ -203,25 +193,25 @@ router.put("/:id", upload.array("images", 10), async (req, res) => {
 ================================ */
 router.delete("/:id", async (req, res) => {
   try {
-    const research = await ResearchInFocus.findOne({
+    const happening = await Happenings.findOne({
       _id: req.params.id,
       isDeleted: false,
     });
 
-    if (!research) {
+    if (!happening) {
       return res.status(404).json({
         success: false,
-        message: "Happenings not found",
+        message: "Happening not found",
       });
     }
 
-    research.isDeleted = true;
-    research.deletedAt = new Date();
-    await research.save();
+    happening.isDeleted = true;
+    happening.deletedAt = new Date();
+    await happening.save();
 
     res.json({
       success: true,
-      message: "Happenings soft deleted successfully",
+      message: "Happening deleted successfully",
     });
   } catch (err) {
     res.status(500).json({
