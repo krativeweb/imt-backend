@@ -17,6 +17,7 @@ const __dirname = path.dirname(__filename);
    UPLOAD DIRECTORIES
 =================================================== */
 const uploadRoot = path.join(__dirname, "../uploads");
+
 const studentLifeDir = path.join(uploadRoot, "student-life");
 const bannerDir = path.join(studentLifeDir, "banner");
 const lifeDir = path.join(studentLifeDir, "life");
@@ -57,23 +58,26 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ===================================================
-   PATH NORMALIZER (🔥 KEY FIX)
+   PATH HELPERS
 =================================================== */
 const normalizePath = (p) => {
   if (!p) return null;
 
   let val = decodeURIComponent(p).trim();
-
-  // Remove domain if present
   val = val.replace(/^https?:\/\/[^/]+/i, "");
 
-  // Keep only API upload path
-  const idx = val.indexOf("/api/student-life/uploads/");
-  if (idx !== -1) {
-    val = val.substring(idx);
+  const apiIndex = val.indexOf("/api/");
+  if (apiIndex !== -1) {
+    val = val.substring(apiIndex);
   }
 
   return val;
+};
+
+const getFileName = (p) => {
+  if (!p) return null;
+  const clean = normalizePath(p);
+  return clean ? path.basename(clean) : null;
 };
 
 /* ===================================================
@@ -89,25 +93,7 @@ router.get("/", async (req, res) => {
 
     res.json(pages);
   } catch (err) {
-    console.error(err);
     res.status(500).json({ success: false, message: "Fetch failed" });
-  }
-});
-
-/* ===================================================
-   GET BY ID
-=================================================== */
-router.get("/:id", async (req, res) => {
-  try {
-    const page = await Studentlife.findById(req.params.id);
-
-    if (!page || page.isDeleted) {
-      return res.status(404).json({ success: false, message: "Not found" });
-    }
-
-    res.json(page);
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
   }
 });
 
@@ -124,13 +110,16 @@ router.put(
     try {
       const { body, files } = req;
 
-      /* FIND OLD DOC */
       const oldDoc = await Studentlife.findById(req.params.id);
       if (!oldDoc) {
-        return res.status(404).json({ success: false, message: "Record not found" });
+        return res
+          .status(404)
+          .json({ success: false, message: "Record not found" });
       }
 
-      /* TEXT DATA */
+      /* =========================
+         TEXT DATA
+      ========================= */
       const updateData = {
         page_title: body.page_title,
         page_slug: body.page_slug,
@@ -142,49 +131,47 @@ router.put(
         student_life_content: body.student_life_content,
       };
 
-      /* BANNER IMAGE */
+      /* =========================
+         BANNER IMAGE
+      ========================= */
       if (files?.banner_image?.length) {
-        updateData.banner_image =
-          `/api/student-life/uploads/student-life/banner/${files.banner_image[0].filename}`;
+        updateData.banner_image = `/api/student-life/uploads/student-life/banner/${files.banner_image[0].filename}`;
       }
 
-      /* ---------------- LIFE IMAGES ---------------- */
+      /* =========================
+         LIFE IMAGES (FIXED)
+      ========================= */
+      let raw =
+        body.existing_student_life_images ??
+        body["existing_student_life_images[]"];
 
-      /* GET EXISTING FROM FORM */
-      let raw = body["existing_student_life_images[]"];
       let keepImages = [];
 
-      if (raw === undefined) {
+      if (raw === "__EMPTY__") {
+        keepImages = [];
+      } else if (!raw) {
         keepImages = oldDoc.student_life_images || [];
       } else {
         keepImages = Array.isArray(raw) ? raw : [raw];
       }
 
-      keepImages = keepImages
-        .map(normalizePath)
+      const keepFiles = keepImages
+        .map(getFileName)
         .filter(Boolean);
 
-      const dbImages = (oldDoc.student_life_images || [])
-        .map(normalizePath)
+      const dbFiles = (oldDoc.student_life_images || [])
+        .map(getFileName)
         .filter(Boolean);
 
-      /* FIND REMOVED */
-      const removedImages = dbImages.filter(
-        (img) => !keepImages.includes(img)
+      const removedFiles = dbFiles.filter(
+        (f) => !keepFiles.includes(f)
       );
 
-      /* DELETE REMOVED FILES */
-      removedImages.forEach((img) => {
-        const relativePath = img.replace(
-          "/api/student-life/uploads/",
-          ""
-        );
-
-        const filePath = path.join(uploadRoot, relativePath);
-
+      /* DELETE FILES FROM DISK */
+      removedFiles.forEach((file) => {
+        const filePath = path.join(lifeDir, file);
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
-          console.log("Deleted image:", filePath);
         }
       });
 
@@ -195,13 +182,14 @@ router.put(
             `/api/student-life/uploads/student-life/life/${f.filename}`
         ) || [];
 
-      /* FINAL MERGE */
+      /* FINAL IMAGE ARRAY */
       updateData.student_life_images = [
-        ...keepImages,
+        ...(oldDoc.student_life_images || []).filter((img) =>
+          keepFiles.includes(getFileName(img))
+        ),
         ...newImages,
       ];
 
-      /* UPDATE DB */
       const updated = await Studentlife.findByIdAndUpdate(
         req.params.id,
         updateData,
@@ -213,7 +201,6 @@ router.put(
         message: "Updated successfully",
         data: updated,
       });
-
     } catch (err) {
       console.error("Update error:", err);
       res.status(500).json({ success: false, message: err.message });
