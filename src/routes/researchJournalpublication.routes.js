@@ -38,7 +38,7 @@ const upload = multer({ storage });
 
 /* =====================================================
    GET ALL JOURNAL PUBLICATIONS
-   GET /api/research-journal-publication
+   SORT BY sortDate DESC
 ===================================================== */
 router.get("/", async (req, res) => {
   try {
@@ -48,9 +48,8 @@ router.get("/", async (req, res) => {
       filter.academic_year = req.query.year;
     }
 
-    const publications = await ResearchJournalPublication.find(filter).sort({
-      createdAt: -1,
-    });
+    const publications = await ResearchJournalPublication.find(filter)
+      .sort({ sortDate: -1 }); // ✅ DATE SORT
 
     res.json({
       success: true,
@@ -65,7 +64,7 @@ router.get("/", async (req, res) => {
 });
 
 /* ===============================
-   GET SINGLE PUBLICATION
+   GET SINGLE
 ================================ */
 router.get("/:id", async (req, res) => {
   try {
@@ -100,6 +99,7 @@ router.post("/", upload.single("image"), async (req, res) => {
   try {
     const {
       academic_year,
+      sortDate,
       author_name,
       publication_title,
       authors,
@@ -112,11 +112,11 @@ router.post("/", upload.single("image"), async (req, res) => {
     /* REQUIRED FIELD CHECK */
     if (
       !academic_year ||
+      !sortDate ||
       !author_name ||
       !publication_title ||
       !authors ||
       !journal_name ||
-      !volume ||
       !abstract
     ) {
       return res.status(400).json({
@@ -127,11 +127,12 @@ router.post("/", upload.single("image"), async (req, res) => {
 
     const publication = await ResearchJournalPublication.create({
       academic_year,
+      sortDate: new Date(sortDate), // ✅ IMPORTANT
       author_name,
       publication_title,
       authors,
       journal_name,
-      volume,
+      volume: volume || "",
       publication_url: publication_url || "",
       abstract,
       image: req.file
@@ -188,15 +189,18 @@ router.put("/:id", upload.single("image"), async (req, res) => {
     });
 
     /* ----------------------------
-       VOLUME (SPECIAL HANDLING)
+       SORT DATE UPDATE
+    ---------------------------- */
+    if (req.body.sortDate) {
+      publication.sortDate = new Date(req.body.sortDate); // ✅
+    }
+
+    /* ----------------------------
+       VOLUME
     ---------------------------- */
     if (req.body.volume !== undefined) {
-      if (req.body.volume === "") {
-        // 🔥 REMOVE volume field
-        publication.volume = undefined;
-      } else {
-        publication.volume = req.body.volume;
-      }
+      publication.volume =
+        req.body.volume === "" ? undefined : req.body.volume;
     }
 
     /* ----------------------------
@@ -221,7 +225,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 });
 
 /* ===============================
-   SOFT DELETE PUBLICATION
+   SOFT DELETE
 ================================ */
 router.delete("/:id", async (req, res) => {
   try {

@@ -13,6 +13,16 @@ const researchJournalPublicationSchema = new mongoose.Schema(
     },
 
     /* -------------------------
+       SORT / PUBLICATION DATE
+       Used for ordering (DESC)
+    ------------------------- */
+    sortDate: {
+      type: Date,
+      required: true,
+      index: true, // 🔑 important for sorting
+    },
+
+    /* -------------------------
        AUTHOR / FACULTY NAME
     ------------------------- */
     author_name: {
@@ -49,7 +59,7 @@ const researchJournalPublicationSchema = new mongoose.Schema(
     },
 
     /* -------------------------
-       VOLUME (NEW)
+       VOLUME
     ------------------------- */
     volume: {
       type: String,
@@ -67,7 +77,7 @@ const researchJournalPublicationSchema = new mongoose.Schema(
 
     /* -------------------------
        ABSTRACT (TinyMCE HTML)
-       ❗ DO NOT trim (keeps HTML safe)
+       ❗ DO NOT trim
     ------------------------- */
     abstract: {
       type: String,
@@ -99,6 +109,9 @@ const researchJournalPublicationSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+/* 🚀 INDEX FOR FAST SORTING */
+researchJournalPublicationSchema.index({ sortDate: -1 });
 
 /* 👇 FORCE COLLECTION NAME */
 export default mongoose.model(

@@ -13,6 +13,16 @@ const researchCasesPublicationSchema = new mongoose.Schema(
     },
 
     /* -------------------------
+       SORT / PUBLICATION DATE
+       Used for ordering (DESC)
+    ------------------------- */
+    sortDate: {
+      type: Date,
+      required: true,
+      index: true, // 🔑 important for sorting performance
+    },
+
+    /* -------------------------
        NAME (Primary Author / Faculty)
     ------------------------- */
     name: {
@@ -65,15 +75,16 @@ const researchCasesPublicationSchema = new mongoose.Schema(
     case_url: {
       type: String,
       trim: true,
+      default: "",
     },
 
     /* -------------------------
-       ABSTRACT
+       ABSTRACT (HTML from editor)
+       ❗ DO NOT trim
     ------------------------- */
     abstract: {
       type: String,
       required: true,
-      trim: true,
     },
 
     /* -------------------------
@@ -101,6 +112,9 @@ const researchCasesPublicationSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+/* 🚀 INDEX FOR FAST SORTING BY DATE */
+researchCasesPublicationSchema.index({ sortDate: -1 });
 
 /* 👇 FORCE COLLECTION NAME */
 export default mongoose.model(

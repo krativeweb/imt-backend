@@ -36,7 +36,7 @@ const upload = multer({ storage });
 
 /* =====================================================
    GET ALL CASE PUBLICATIONS
-   GET /api/research-cases-publication
+   🔥 SORT BY sortDate DESC (LATEST FIRST)
 ===================================================== */
 router.get("/", async (req, res) => {
   try {
@@ -46,13 +46,19 @@ router.get("/", async (req, res) => {
       filter.academic_year = req.query.year;
     }
 
-    const cases = await ResearchCasesPublication.find(filter).sort({
-      createdAt: -1,
-    });
+    const cases = await ResearchCasesPublication
+      .find(filter)
+      .sort({ sortDate: -1 }); // ✅ CRITICAL FIX
 
-    res.json({ success: true, data: cases });
+    res.json({
+      success: true,
+      data: cases,
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 });
 
@@ -86,6 +92,7 @@ router.post("/", upload.single("image"), async (req, res) => {
   try {
     const {
       academic_year,
+      sortDate,               // ✅ NEW
       name,
       title,
       authors,
@@ -95,8 +102,10 @@ router.post("/", upload.single("image"), async (req, res) => {
       abstract,
     } = req.body;
 
+    /* REQUIRED FIELD CHECK */
     if (
       !academic_year ||
+      !sortDate ||             // ✅ REQUIRED
       !name ||
       !title ||
       !authors ||
@@ -112,21 +121,28 @@ router.post("/", upload.single("image"), async (req, res) => {
 
     const newCase = await ResearchCasesPublication.create({
       academic_year,
+      sortDate: new Date(sortDate), // ✅ SAVE AS DATE
       name,
       title,
       authors,
       publisher,
       reference,
-      case_url,
+      case_url: case_url || "",
       abstract,
       image: req.file
         ? `uploads/research-cases-publication/${req.file.filename}`
         : "",
     });
 
-    res.status(201).json({ success: true, data: newCase });
+    res.status(201).json({
+      success: true,
+      data: newCase,
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 });
 
@@ -147,6 +163,9 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       });
     }
 
+    /* ----------------------------
+       NORMAL FIELD UPDATES
+    ---------------------------- */
     const fields = [
       "academic_year",
       "name",
@@ -164,15 +183,31 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       }
     });
 
+    /* ----------------------------
+       SORT DATE UPDATE
+    ---------------------------- */
+    if (req.body.sortDate) {
+      caseItem.sortDate = new Date(req.body.sortDate);
+    }
+
+    /* ----------------------------
+       IMAGE UPDATE
+    ---------------------------- */
     if (req.file) {
       caseItem.image = `uploads/research-cases-publication/${req.file.filename}`;
     }
 
     await caseItem.save();
 
-    res.json({ success: true, data: caseItem });
+    res.json({
+      success: true,
+      data: caseItem,
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 });
 
@@ -202,7 +237,10 @@ router.delete("/:id", async (req, res) => {
       message: "Case publication deleted successfully",
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 });
 
