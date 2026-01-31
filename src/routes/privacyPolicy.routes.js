@@ -21,7 +21,9 @@ const storage = multer.diskStorage({
   },
 
   filename: (req, file, cb) => {
-    const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const uniqueName =
+      Date.now() + "-" + Math.round(Math.random() * 1e9);
+
     cb(null, uniqueName + path.extname(file.originalname));
   },
 });
@@ -30,48 +32,90 @@ const upload = multer({ storage });
 
 /* ===============================
    GET ALL PRIVACY POLICIES
-   (Frontend expects ARRAY)
 ================================ */
 router.get("/", async (req, res) => {
   try {
-    const pages = await PrivacyPolicy.find().sort({ createdAt: -1 });
+    const pages = await PrivacyPolicy.find()
+      .sort({ createdAt: -1 });
+
     res.status(200).json(pages);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: "Failed to fetch privacy policies",
+      error: error.message,
+    });
   }
 });
 
 /* ===============================
    UPDATE PRIVACY POLICY BY ID
 ================================ */
-router.put("/:id", upload.single("banner_image"), async (req, res) => {
-  try {
-    const data = { ...req.body };
+router.put(
+  "/:id",
+  upload.single("banner_image"),
+  async (req, res) => {
+    try {
+      const {
+        page_title,
+        page_slug,
+        meta_title,
+        meta_description,
+        meta_keywords,
+        meta_canonical,
+        banner_text,
+        email,
+        phone,
+        content,
+      } = req.body;
 
-    // If banner image uploaded
-    if (req.file) {
-      data.banner_image = `/uploads/banner/${req.file.filename}`;
-    }
+      // Build update object
+      const updateData = {
+        page_title,
+        page_slug,
+        meta_title,
+        meta_description,
+        meta_keywords,
+        meta_canonical,
+        banner_text,
+        email,
+        phone,
+        content,
+      };
 
-    const updatedPage = await PrivacyPolicy.findByIdAndUpdate(
-      req.params.id,
-      data,
-      { new: true }
-    );
+      // If new banner uploaded
+      if (req.file) {
+        updateData.banner_image = `/uploads/banner/${req.file.filename}`;
+      }
 
-    if (!updatedPage) {
-      return res.status(404).json({
-        message: "Privacy policy page not found",
+      const updatedPage =
+        await PrivacyPolicy.findByIdAndUpdate(
+          req.params.id,
+          updateData,
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+
+      if (!updatedPage) {
+        return res.status(404).json({
+          message: "Privacy policy page not found",
+        });
+      }
+
+      res.status(200).json({
+        message: "Privacy policy updated successfully",
+        data: updatedPage,
+      });
+    } catch (error) {
+      console.error("Update error:", error);
+
+      res.status(500).json({
+        message: "Failed to update privacy policy",
+        error: error.message,
       });
     }
-
-    res.status(200).json({
-      message: "Privacy policy updated successfully",
-      data: updatedPage,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
-});
+);
 
 export default router;

@@ -13,18 +13,60 @@ const PrivacyPolicySchema = new mongoose.Schema(
       unique: true,
     },
 
-    meta_title: String,
-    meta_description: String,
-    meta_keywords: String,
-    meta_canonical: String,
+    meta_title: {
+      type: String,
+      default: "",
+    },
 
-    banner_image: String,
-    banner_text: String,
+    meta_description: {
+      type: String,
+      default: "",
+    },
+
+    meta_keywords: {
+      type: String,
+      default: "",
+    },
+
+    meta_canonical: {
+      type: String,
+      default: "",
+    },
+
+    banner_image: {
+      type: String,
+      default: "",
+    },
+
+    banner_text: {
+      type: String,
+      default: "",
+    },
+
+    // ✅ NEW: Email
+    email: {
+      type: String,
+      default: "",
+      lowercase: true,
+      trim: true,
+    },
+
+    // ✅ NEW: Phone
+    phone: {
+      type: String,
+      default: "",
+      trim: true,
+    },
 
     // ✅ Privacy Policy main content
-    content: String,
+    content: {
+      type: String,
+      default: "",
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 const PrivacyPolicy =
