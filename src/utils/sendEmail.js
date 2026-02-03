@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
   },
   tls: {
     rejectUnauthorized: false, // 🔥 REQUIRED on VPS / cloud
-  },
+  }, 
 });
 
 const CATEGORY_EMAIL_MAP = {
