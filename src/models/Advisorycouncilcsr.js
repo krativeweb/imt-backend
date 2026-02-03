@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const advisoryCouncilSchema = new mongoose.Schema(
   {
-    /* -------------------------
+     /* -------------------------
        MEMBER TYPE
        -------------------------
        ADVISORY_COUNCIL
