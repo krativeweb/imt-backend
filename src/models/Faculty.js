@@ -38,6 +38,28 @@ const FacultySchema = new mongoose.Schema(
       required: true,
     },
 
+     meta_title: {
+      type: String,
+      trim: true,
+      
+    },
+
+    meta_description: {
+      type: String,
+      trim: true,
+    
+    },
+
+    meta_keywords: {
+      type: String,
+      trim: true,
+    },
+
+    meta_canonical: {
+      type: String,
+      trim: true,
+    },
+
     qr_image: {
       type: String,
       required: true,
